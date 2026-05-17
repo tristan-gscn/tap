@@ -1,1 +1,5 @@
-<h1 class="text-blue-500">Hello World</h1>
+<script>
+    import StartPage from "./pages/StartPage.svelte";
+</script>
+
+<StartPage />

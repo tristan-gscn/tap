@@ -1,2 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Upheaval';
+  src: url('/src/assets/fonts/upheavtt.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  font-family: 'Upheaval', sans-serif;
+  image-rendering: pixelated;
+}
