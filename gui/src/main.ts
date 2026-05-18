@@ -1,8 +1,6 @@
 import './app.css'
+import { mount } from 'svelte'
 import App from './App.svelte'
 
-const app = new App({
-  target: document.getElementById('app') as HTMLElement,
-})
-
-export default app
+const target = document.getElementById('app') as HTMLElement
+mount(App, { target })
