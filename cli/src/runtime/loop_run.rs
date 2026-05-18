@@ -4,19 +4,19 @@ use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
 
-use crate::app::App;
 use crate::ui;
 use super::keys;
+use super::client::Session;
 
-pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, mut app: App) -> io::Result<()> {
+pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, session: &mut Session) -> io::Result<()> {
     let tick_rate = Duration::from_millis(250);
     let mut last_tick = Instant::now();
     loop {
-        terminal.draw(|f| ui::draw(f, &app))?;
+        terminal.draw(|f| ui::draw(f, &session.app))?;
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press && keys::handle(key, &mut app) {
+                if key.kind == KeyEventKind::Press && keys::handle(key, session) {
                     return Ok(());
                 }
             }

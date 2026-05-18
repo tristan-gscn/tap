@@ -16,7 +16,8 @@ pub fn start() -> io::Result<()> {
     execute!(stdout, EnterAlternateScreen)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-    let res = loop_run::run(&mut terminal, session.app);
+    let mut session = session;
+    let res = loop_run::run(&mut terminal, &mut session);
     disable_raw_mode()?;
     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;

@@ -1,18 +1,19 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use crate::app::{App, Tab};
+use crate::app::Tab;
+use super::client::Session;
 
-pub fn handle(key: KeyEvent, app: &mut App) -> bool {
+pub fn handle(key: KeyEvent, session: &mut Session) -> bool {
     match key.code {
         KeyCode::Esc => return true,
-        KeyCode::F(1) => app.current_tab = Tab::Adventure,
-        KeyCode::F(2) => app.current_tab = Tab::Character,
-        KeyCode::F(3) => app.current_tab = Tab::Social,
-        KeyCode::Enter => app.submit_input(),
+        KeyCode::F(1) => session.app.current_tab = Tab::Adventure,
+        KeyCode::F(2) => session.app.current_tab = Tab::Character,
+        KeyCode::F(3) => session.app.current_tab = Tab::Social,
+        KeyCode::Enter => session.handle_input(),
         KeyCode::Backspace => {
-            app.input.pop();
+            session.app.input.pop();
         }
         KeyCode::Char(c) => {
-            app.input.push(c);
+            session.app.input.push(c);
         }
         _ => {}
     }
