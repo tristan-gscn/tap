@@ -3,4 +3,6 @@
     import RoomsPage from "./pages/RoomsPage.svelte";
 </script>
 
-<RoomsPage />
+<div class="relative w-screen h-screen">
+    <RoomsPage />
+</div>

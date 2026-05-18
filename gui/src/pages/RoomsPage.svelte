@@ -2,6 +2,7 @@
     import type { Room } from '../models/Room';
     import { placeInCircle } from '../utils/roomLayout';
     import { buildSprites, splitPositions } from '../utils/roomSprites';
+    import ChatBox from '../components/ChatBox.svelte';
 
     // TODO: connect backend to replace fake values
     let room: Room = $state({
@@ -12,8 +13,8 @@
             exits: {
                 north: 'room.north_id',
                 south: 'room.south_id',
-                east: 'x',
-                west: ''
+                east: '',
+                west: 'x'
             }
         },
         players: ['username1', 'username2'],
@@ -52,12 +53,15 @@
 
 <div class="w-screen h-screen bg-black flex items-center justify-center">
     <div class="relative w-full h-full">
+        <ChatBox />
         <!-- Main Room Block -->
         <div
             class="absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 border-5 border-white relative"
         >
             <!-- svelte-ignore a11y_label_has_associated_control -->
-            <h1 class="text-white text-xl ml-4 mt-2 select-none">{room.room.name} <label class="text-purple-500">({room.room.id})</label></h1>
+            <h1 class="text-white text-xl absolute right-4 top-2 select-none">
+                {room.room.name} <label class="text-purple-500">({room.room.id})</label>
+            </h1>
             <img
                     src="/characters/player_1.png"
                     alt="Player Character"
@@ -115,5 +119,23 @@
                 class="absolute left-0 top-1/2 h-60 w-[11%] -translate-y-1/2 bg-black border-t-[5px] border-b-[5px] border-white"
             ></div>
         {/if}
+
+        <div class="absolute bottom-6 left-6 z-10 flex gap-3">
+            <button
+                class="bg-purple-500  text-white text-2xl px-4 py-2"
+            >
+                ADVENTURE
+            </button>
+            <button
+                class="bg-gray-500 hover:bg-purple-500 text-white text-2xl px-4 py-2 cursor-pointer"
+            >
+                CHARACTER
+            </button>
+            <button
+                class="bg-gray-500 hover:bg-purple-500 text-white text-2xl px-4 py-2 cursor-pointer"
+            >
+                SOCIAL
+            </button>
+        </div>
     </div>
 </div>
