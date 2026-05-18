@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 pub struct RoomMock {
     pub name: String,
     pub description: String,
@@ -8,14 +10,26 @@ pub struct RoomMock {
 }
 
 impl RoomMock {
-    pub fn sample() -> Self {
+    pub fn from_server(
+        name: String,
+        description: String,
+        exits: BTreeMap<String, String>,
+        players: Vec<String>,
+        npcs: Vec<String>,
+        items: Vec<String>,
+    ) -> Self {
+        let exits = exits
+            .into_iter()
+            .map(|(direction, destination)| format!("{} -> {}", direction, destination))
+            .collect();
+
         Self {
-            name: "Ironleaf Gate".into(),
-            description: "A mossy archway stands before a winding forest road. Torches flicker in the rain.".into(),
-            exits: vec!["North".into(), "East".into(), "South".into()],
-            players: vec!["Ari".into(), "Bram".into()],
-            npcs: vec!["Gatekeeper Rho".into(), "Traveling Merchant".into()],
-            items: vec!["Bronze Key".into(), "Lantern".into(), "Old Map".into()],
+            name,
+            description,
+            exits,
+            players,
+            npcs,
+            items,
         }
     }
 }

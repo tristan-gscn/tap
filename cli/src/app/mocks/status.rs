@@ -8,9 +8,9 @@ pub struct PlayerStatusMock {
 }
 
 impl PlayerStatusMock {
-    pub fn sample() -> Self {
+    pub fn sample(name: String) -> Self {
         Self {
-            name: "Lyra".into(),
+            name,
             hp_current: 72,
             hp_max: 100,
             combat_status: "Calm".into(),

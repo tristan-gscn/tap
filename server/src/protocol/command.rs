@@ -56,7 +56,7 @@ impl Command {
     }
 }
 
-/// Renvoie le texte nettoyé ou une erreur 400 si vide.
+/// Returns the trimmed text or a 400 error if it is empty.
 fn require(rest: &str, msg: &'static str) -> Result<String, Response> {
     if rest.is_empty() {
         Err(Response::error(400, msg))
