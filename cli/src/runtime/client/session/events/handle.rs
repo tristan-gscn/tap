@@ -14,7 +14,7 @@ pub fn handle(session: &mut Session, resp: ApiResponse) {
             if let Ok(inv) = serde_json::from_value::<InventoryResponse>(data) { session.apply_inventory_to_status(inv); }
         }
         ApiResponse::Error { code, message } => {
-            session.app.logs.push(format!("[Server] ERR {} {}", code, message));
+            session.app.logs.push(format!("<server> ERR {} {}", code, message));
         }
         _ => {}
     }

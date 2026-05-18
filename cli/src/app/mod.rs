@@ -1,6 +1,5 @@
 mod tab;
 mod state;
-mod input;
 mod init;
 pub mod mocks;
 

@@ -21,8 +21,8 @@ pub fn connect() -> io::Result<Session> {
     let inventory = parse_inventory(parse_line(&read_line_blocking(&mut reader, &mut read_buf)?)?)?;
 
     let logs = vec![
-        format!("[System] > Connected to {} as {}", SERVER_ADDR, player_name),
-        format!("[System] > Room loaded: {} ({})", look.room.name, look.room.id),
+        format!("[System] Connected to {} as {}", SERVER_ADDR, player_name),
+        format!("[System] Room loaded: {} ({})", look.room.name, look.room.id),
     ];
 
     let mut app = App::new(player_name, RoomMock::from_server(

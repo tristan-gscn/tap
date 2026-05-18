@@ -13,11 +13,17 @@ impl Session {
         let first_word = trimmed.split_whitespace().next().unwrap_or("").to_uppercase();
         let is_command = helpers::is_command(first_word.as_str());
 
+        let name = self.app.status.name.clone();
         let to_send = if is_command {
-            self.app.logs.push(format!("[Command] > {}", trimmed));
+            if first_word == "CHAT" {
+                if helpers::chat_message(trimmed).is_none() {
+                    self.app.logs.push(format!("[Cmd] <{}> {}", name, trimmed));
+                }
+            } else {
+                self.app.logs.push(format!("[Cmd] <{}> {}", name, trimmed));
+            }
             trimmed.to_string()
         } else {
-            self.app.logs.push(format!("[Fallback] > CHAT ROOM {}", trimmed));
             format!("CHAT ROOM {}", trimmed)
         };
 
