@@ -1,14 +1,9 @@
-use std::io;
-
 use super::super::protocol::{ApiResponse, LookResponse, InventoryResponse};
-use super::super::transport::{read_response, send_line};
 use super::Session;
 
 impl Session {
-    pub fn send_command(&mut self, line: &str) -> io::Result<ApiResponse> {
-        send_line(&mut self.stream, line)?;
-        let resp = read_response(&mut self.stream)?;
-        match &resp {
+    pub fn log_response(&mut self, resp: &ApiResponse) {
+        match resp {
             ApiResponse::Ok { kind, data } => {
                 self.app.logs.push(format!("[Server] OK {} {}", kind, data));
             }
@@ -16,7 +11,6 @@ impl Session {
                 self.app.logs.push(format!("[Server] ERR {} {}", code, message));
             }
         }
-        Ok(resp)
     }
 
     pub fn apply_look_to_room(&mut self, look: LookResponse) {
@@ -34,5 +28,5 @@ impl Session {
         self.app.status.inventory = inventory.items;
     }
 
-    // refresh methods are implemented in refresh.rs
+    // refresh methods removed; updates are event-driven
 }

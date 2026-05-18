@@ -13,6 +13,9 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, session: &mut 
     let mut last_tick = Instant::now();
     loop {
         terminal.draw(|f| ui::draw(f, &session.app))?;
+        if let Err(err) = session.poll_events() {
+            session.app.logs.push(format!("[Client] Event poll error: {}", err));
+        }
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
