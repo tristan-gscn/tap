@@ -41,9 +41,7 @@
         if (stored && stored.trim().length > 0) {
             return stored;
         }
-        const name = `gui-${Math.floor(Math.random() * 9000 + 1000)}`;
-        localStorage.setItem('tap-player-name', name);
-        return name;
+        return 'Unknown';
     }
 
     onMount(() => {

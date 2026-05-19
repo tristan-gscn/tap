@@ -1,6 +1,6 @@
 <script lang="ts">
     import StartPage from "./pages/StartPage.svelte";
-    import RoomsPage from "./pages/RoomsPage.svelte";
+    import GamePage from "./pages/game_page/GamePage.svelte";
     import NamePage from "./pages/NamePage.svelte";
 
     const storedName = localStorage.getItem('tap-player-name');
@@ -10,7 +10,8 @@
         screen = 'name';
     };
 
-    const handleNameReady = () => {
+    const handleNameReady = (event: CustomEvent<{name: string}>) => {
+        localStorage.setItem('tap-player-name', event.detail.name);
         screen = 'rooms';
     };
 
@@ -25,6 +26,6 @@
     {:else if screen === 'name'}
         <NamePage on:ready={handleNameReady} />
     {:else}
-        <RoomsPage on:quit={handleQuit} />
+        <GamePage on:quit={handleQuit} />
     {/if}
 </div>
