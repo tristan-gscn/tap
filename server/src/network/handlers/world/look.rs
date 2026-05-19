@@ -34,12 +34,19 @@ pub async fn look(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
         .map(|p| &p.name)
         .collect();
 
-    let mut npcs: Vec<String> = Vec::new();
-    for spawn in &loc.spawns {
-        for _ in 0..spawn.count {
-            npcs.push(spawn.npc_type.clone());
-        }
-    }
+    let npcs: Vec<Value> = state
+        .world
+        .npcs_in(&room_id)
+        .iter()
+        .map(|n| {
+            json!({
+                "id": n.id,
+                "type": n.npc_type,
+                "hp": n.hp,
+                "max_hp": n.max_hp,
+            })
+        })
+        .collect();
 
     Response::ok(
         "look",

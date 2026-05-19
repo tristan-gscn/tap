@@ -18,4 +18,14 @@ impl Direction {
             Direction::West => "west",
         }
     }
+
+    pub fn from_input(s: &str) -> Option<Direction> {
+        match s.trim().to_lowercase().as_str() {
+            "north" | "n" => Some(Direction::North),
+            "south" | "s" => Some(Direction::South),
+            "east" | "e" => Some(Direction::East),
+            "west" | "w" => Some(Direction::West),
+            _ => None,
+        }
+    }
 }

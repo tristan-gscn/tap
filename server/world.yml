@@ -18,8 +18,18 @@ world:
       description: "A cozy tavern filled with warmth and laughter."
       exits:
         south: "start"
+        north: "cellar"
       items:
         - "ale"
+
+    cellar:
+      name: "Dark Cellar"
+      description: "A damp cellar crawling with vermin."
+      exits:
+        south: "tavern"
+      spawns:
+        - npc_type: "rat"
+          count: 3
 
     shop:
       name: "General Store"
@@ -55,6 +65,7 @@ world:
         - "The roads can be dangerous."
       stats:
         hp: 20
+        attack: 4
 
     merchant:
       name: "Shop Keeper"
@@ -64,3 +75,34 @@ world:
         - "What can I get for you today?"
       stats:
         hp: 15
+        attack: 0
+
+    rat:
+      name: "Giant Rat"
+      description: "A mangy rat the size of a dog."
+      dialogue:
+        - "*hisses*"
+      stats:
+        hp: 12
+        attack: 3
+
+  quests:
+    herb_gathering:
+      name: "Herb Gathering"
+      description: "Collect healing herbs for the village guard."
+      objective:
+        kind: collect
+        target: herbs
+        count: 1
+      reward:
+        xp: 50
+
+    pest_control:
+      name: "Pest Control"
+      description: "Clear the cellar of giant rats."
+      objective:
+        kind: kill
+        target: rat
+        count: 3
+      reward:
+        xp: 120

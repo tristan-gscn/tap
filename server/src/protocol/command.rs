@@ -1,3 +1,4 @@
+use crate::config::Direction;
 use crate::protocol::response::Response;
 
 #[derive(Debug)]
@@ -16,6 +17,14 @@ pub enum GroupAction {
 }
 
 #[derive(Debug)]
+pub enum QuestAction {
+    List,
+    Status,
+    Accept { id: String },
+    Complete { id: String },
+}
+
+#[derive(Debug)]
 pub enum Command {
     Connect { name: String },
     Who,
@@ -25,6 +34,10 @@ pub enum Command {
     Drop { item: String },
     Inventory,
     Group(GroupAction),
+    Move { direction: Direction },
+    Attack { target: String },
+    Quest(QuestAction),
+    Quit,
     Unknown(String),
 }
 
@@ -41,6 +54,7 @@ impl Command {
             "WHO" => Ok(Command::Who),
             "LOOK" => Ok(Command::Look),
             "INVENTORY" => Ok(Command::Inventory),
+            "QUIT" => Ok(Command::Quit),
 
             "TAKE" => require(rest, "TAKE requires an item")
                 .map(|item| Command::Take { item }),
@@ -51,12 +65,24 @@ impl Command {
             "CHAT" => parse_chat(rest),
             "GROUP" => parse_group(rest),
 
+            "MOVE" | "GO" => match Direction::from_input(rest) {
+                Some(direction) => Ok(Command::Move { direction }),
+                None => Err(Response::error(
+                    400,
+                    "MOVE requires a direction (north/south/east/west)",
+                )),
+            },
+
+            "ATTACK" => require(rest, "ATTACK requires a target")
+                .map(|target| Command::Attack { target }),
+
+            "QUEST" => parse_quest(rest),
+
             other => Ok(Command::Unknown(other.to_string())),
         }
     }
 }
 
-/// Renvoie le texte nettoyé ou une erreur 400 si vide.
 fn require(rest: &str, msg: &'static str) -> Result<String, Response> {
     if rest.is_empty() {
         Err(Response::error(400, msg))
@@ -116,4 +142,29 @@ fn parse_group(rest: &str) -> Result<Command, Response> {
         }
     };
     Ok(Command::Group(action))
+}
+
+fn parse_quest(rest: &str) -> Result<Command, Response> {
+    let mut p = rest.splitn(2, ' ');
+    let sub = p.next().unwrap_or("").to_uppercase();
+    let arg = p.next().unwrap_or("").trim();
+
+    let action = match sub.as_str() {
+        "LIST" => QuestAction::List,
+        "STATUS" => QuestAction::Status,
+        "ACCEPT" => QuestAction::Accept {
+            id: require(arg, "QUEST ACCEPT requires a quest id")?,
+        },
+        "COMPLETE" => QuestAction::Complete {
+            id: require(arg, "QUEST COMPLETE requires a quest id")?,
+        },
+        "" => return Err(Response::error(400, "QUEST requires a subcommand")),
+        other => {
+            return Err(Response::error(
+                400,
+                format!("Unknown QUEST subcommand: {}", other),
+            ))
+        }
+    };
+    Ok(Command::Quest(action))
 }

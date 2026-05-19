@@ -29,7 +29,9 @@ pub async fn handle(socket: TcpStream, addr: String, state: Arc<RwLock<GameState
         }
         debug!("[{}] << {}", addr, line);
 
-        let response = match Command::parse(&line) {
+        let parsed: Result<Command, Response> = Command::parse(&line);
+
+        let response: Response = match parsed {
             Ok(cmd) => super::dispatch::dispatch(cmd, &addr, &tx, Arc::clone(&state)).await,
             Err(e) => e,
         };
@@ -38,8 +40,8 @@ pub async fn handle(socket: TcpStream, addr: String, state: Arc<RwLock<GameState
             break;
         }
     }
-
     info!("Connection closed: {}", addr);
     super::handlers::session::disconnect(&addr, state).await;
+    drop(tx);
     let _ = writer_task.await;
 }

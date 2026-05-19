@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use tokio::sync::{mpsc, RwLock};
 
-use crate::network::handlers::{chat, group, inventory, session, world};
+use crate::network::handlers::{chat, combat, group, inventory, quest, session, world};
 use crate::protocol::command::Command;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
@@ -22,6 +22,10 @@ pub async fn dispatch(
         Command::Drop { item } => inventory::drop_item(item, addr, state).await,
         Command::Inventory => inventory::inventory(addr, state).await,
         Command::Group(action) => group::group(action, addr, state).await,
+        Command::Move { direction } => world::move_player(direction, addr, state).await,
+        Command::Attack { target } => combat::attack(target, addr, state).await,
+        Command::Quest(action) => quest::quest(action, addr, state).await,
+        Command::Quit => session::quit(addr, state).await,
         Command::Unknown(raw) => {
             Response::error(404, format!("Unknown command: {}", raw))
         }

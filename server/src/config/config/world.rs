@@ -5,11 +5,7 @@ use serde::Deserialize;
 use super::item::Item;
 use super::location::Location;
 use super::npc::Npc;
-
-#[derive(Debug, Deserialize)]
-pub struct WorldConfig {
-    pub world: WorldData,
-}
+use super::quest::Quest;
 
 #[derive(Debug, Deserialize, Default)]
 pub struct WorldData {
@@ -19,4 +15,6 @@ pub struct WorldData {
     pub items: HashMap<String, Item>,
     #[serde(default)]
     pub npcs: HashMap<String, Npc>,
+    #[serde(default)]
+    pub quests: HashMap<String, Quest>,
 }

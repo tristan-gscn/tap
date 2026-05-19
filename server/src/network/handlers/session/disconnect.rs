@@ -1,41 +1,11 @@
 use std::sync::Arc;
 
 use serde_json::json;
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::RwLock;
 use tracing::info;
 
 use crate::protocol::response::Response;
 use crate::state::game::{GameState, GroupLeave};
-use crate::state::player::Player;
-
-pub async fn connect(
-    name: String,
-    addr: &str,
-    tx: &mpsc::UnboundedSender<Response>,
-    state: Arc<RwLock<GameState>>,
-) -> Response {
-    let mut state = state.write().await;
-
-    if state.players.contains_key(&name) {
-        return Response::error(201, "NAME_IN_USE");
-    }
-
-    let player = Player::new(name.clone(), addr.to_string(), tx.clone());
-    let room = player.room.clone();
-    state.players.insert(name.clone(), player);
-
-    state.broadcast_room(
-        &room,
-        Some(&name),
-        Response::ok(
-            "event",
-            json!({ "event": "presence_enter", "name": name }),
-        ),
-    );
-
-    info!(player = %name, "Player joined");
-    Response::ok("connect", json!({ "name": name }))
-}
 
 pub async fn disconnect(addr: &str, state: Arc<RwLock<GameState>>) {
     let mut state = state.write().await;
@@ -63,7 +33,7 @@ pub async fn disconnect(addr: &str, state: Arc<RwLock<GameState>>) {
                 json!({ "event": "group_disband", "by": name }),
             );
             for m in &members {
-                if m != &name {
+                if m.as_str() != name {
                     state.send_to(m, msg.clone());
                 }
             }
@@ -82,13 +52,4 @@ pub async fn disconnect(addr: &str, state: Arc<RwLock<GameState>>) {
     );
 
     info!(player = %name, "Player disconnected");
-}
-
-pub async fn who(state: Arc<RwLock<GameState>>) -> Response {
-    let state = state.read().await;
-    let names: Vec<&String> = state.players.keys().collect();
-    Response::ok(
-        "who",
-        json!({ "players": names, "count": names.len() }),
-    )
 }

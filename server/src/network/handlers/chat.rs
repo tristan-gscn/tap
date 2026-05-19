@@ -38,14 +38,14 @@ pub async fn chat(
 
     match scope {
         ChatScope::Global => {
-            state.broadcast_all(Some(&name), msg);
+            state.broadcast_all(None, msg);
         }
         ChatScope::Room => {
             let room = state.players[&name].room.clone();
-            state.broadcast_room(&room, Some(&name), msg);
+            state.broadcast_room(&room, None, msg);
         }
         ChatScope::Group => match state.players[&name].group {
-            Some(gid) => state.broadcast_group(gid, Some(&name), msg),
+            Some(gid) => state.broadcast_group(gid, None, msg),
             None => return Response::error(401, "NOT_IN_GROUP"),
         },
     }
