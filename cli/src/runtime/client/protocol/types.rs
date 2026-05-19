@@ -19,7 +19,7 @@ pub struct LookResponse {
     pub room: LookRoom,
     pub players: Vec<String>,
     pub items: Vec<String>,
-    pub npcs: Vec<String>,
+    pub npcs: Vec<LookNpc>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -28,6 +28,15 @@ pub struct LookRoom {
     pub name: String,
     pub description: String,
     pub exits: BTreeMap<String, String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LookNpc {
+    pub id: u64,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub hp: i64,
+    pub max_hp: i64,
 }
 
 #[derive(Debug, Deserialize)]

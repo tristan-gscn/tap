@@ -1,11 +1,24 @@
 use std::collections::BTreeMap;
 
+pub struct RoomNpc {
+    pub id: u64,
+    pub kind: String,
+    pub hp: i64,
+    pub max_hp: i64,
+}
+
+impl RoomNpc {
+    pub fn label(&self) -> String {
+        format!("{} #{}  {}/{} hp", self.kind, self.id, self.hp, self.max_hp)
+    }
+}
+
 pub struct RoomMock {
     pub name: String,
     pub description: String,
     pub exits: Vec<String>,
     pub players: Vec<String>,
-    pub npcs: Vec<String>,
+    pub npcs: Vec<RoomNpc>,
     pub items: Vec<String>,
 }
 
@@ -15,7 +28,7 @@ impl RoomMock {
         description: String,
         exits: BTreeMap<String, String>,
         players: Vec<String>,
-        npcs: Vec<String>,
+        npcs: Vec<RoomNpc>,
         items: Vec<String>,
     ) -> Self {
         let exits = exits

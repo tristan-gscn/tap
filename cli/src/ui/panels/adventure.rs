@@ -14,9 +14,10 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
         .wrap(Wrap { trim: true });
     let entity_chunks = Layout::default().direction(Direction::Vertical)
         .constraints([Constraint::Percentage(34), Constraint::Percentage(33), Constraint::Percentage(33)]).split(sections[1]);
-    let players = Paragraph::new(app.room.players.join("\n")).block(Block::default().borders(Borders::ALL).title("PLAYERS"));
-    let npcs = Paragraph::new(app.room.npcs.join("\n")).block(Block::default().borders(Borders::ALL).title("NPCS"));
-    let items = Paragraph::new(app.room.items.join("\n")).block(Block::default().borders(Borders::ALL).title("ITEMS"));
+    let players = Paragraph::new(app.room.players.join("\n")).block(Block::default().borders(Borders::ALL).title("PLAYERS")).wrap(Wrap { trim: true });
+    let npc_lines = app.room.npcs.iter().map(|n| n.label()).collect::<Vec<_>>().join("\n");
+    let npcs = Paragraph::new(npc_lines).block(Block::default().borders(Borders::ALL).title("NPCS")).wrap(Wrap { trim: true });
+    let items = Paragraph::new(app.room.items.join("\n")).block(Block::default().borders(Borders::ALL).title("ITEMS")).wrap(Wrap { trim: true });
     frame.render_widget(info, sections[0]);
     frame.render_widget(players, entity_chunks[0]);
     frame.render_widget(npcs, entity_chunks[1]);

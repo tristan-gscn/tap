@@ -26,11 +26,22 @@ pub fn read_lines(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<Vec<S
 }
 
 pub fn read_line_blocking(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<String> {
+    let mut tmp = [0u8; 1024];
     loop {
-        let lines = read_lines(reader, buf)?;
-        if let Some(line) = lines.first() {
-            return Ok(line.to_string());
+        while let Some(pos) = buf.iter().position(|b| *b == b'\n') {
+            let bytes: Vec<u8> = buf.drain(..=pos).collect();
+            let line = String::from_utf8_lossy(&bytes).trim().to_string();
+            if !line.is_empty() {
+                return Ok(line);
+            }
         }
-        sleep(Duration::from_millis(10));
+        match reader.read(&mut tmp) {
+            Ok(0) => sleep(Duration::from_millis(10)),
+            Ok(n) => buf.extend_from_slice(&tmp[..n]),
+            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
+                sleep(Duration::from_millis(10))
+            }
+            Err(e) => return Err(e),
+        }
     }
 }

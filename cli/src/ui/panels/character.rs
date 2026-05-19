@@ -1,4 +1,4 @@
-use ratatui::{layout::{Constraint, Direction, Layout, Rect}, style::{Color, Modifier, Style}, text::{Line, Span, Text}, widgets::{Block, Borders, Gauge, Paragraph}, Frame};
+use ratatui::{layout::{Constraint, Direction, Layout, Rect}, style::{Color, Modifier, Style}, text::{Line, Span, Text}, widgets::{Block, Borders, Gauge, Paragraph, Wrap}, Frame};
 use crate::app::App;
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
@@ -8,7 +8,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     let status_text = Text::from(vec![
         Line::from(vec![Span::styled("Name: ", Style::default().add_modifier(Modifier::BOLD)), Span::raw(app.status.name.as_str())]),
         Line::from(vec![Span::styled("Combat: ", Style::default().add_modifier(Modifier::BOLD)), Span::raw(app.status.combat_status.as_str())]),
-        Line::from(""),
+        Line::from(vec![Span::styled("XP: ", Style::default().add_modifier(Modifier::BOLD)), Span::raw(app.status.xp.to_string())]),
         Line::from("HP"),
     ]);
     let status_block = Paragraph::new(status_text).block(Block::default().borders(Borders::ALL).title("DETAILED PLAYER STATUS"));
@@ -17,8 +17,13 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     let gauge = Gauge::default().gauge_style(Style::default().fg(Color::Green)).ratio(hp_ratio)
         .label(format!("{}/{}", app.status.hp_current, app.status.hp_max));
     frame.render_widget(gauge, gauge_area);
-    let inventory = Paragraph::new(app.status.inventory.join("\n")).block(Block::default().borders(Borders::ALL).title("INVENTORY"));
-    let quests = Paragraph::new(app.status.quests.join("\n")).block(Block::default().borders(Borders::ALL).title("ACTIVE QUESTS"));
+    let inventory = Paragraph::new(app.status.inventory.join("\n"))
+        .block(Block::default().borders(Borders::ALL).title("INVENTORY"))
+        .wrap(Wrap { trim: true });
+    let quest_lines = app.status.quests.iter().map(|q| q.label()).collect::<Vec<_>>().join("\n");
+    let quests = Paragraph::new(quest_lines)
+        .block(Block::default().borders(Borders::ALL).title("QUESTS (tracked + progress)"))
+        .wrap(Wrap { trim: true });
     frame.render_widget(inventory, sections[1]);
     frame.render_widget(quests, sections[2]);
 }

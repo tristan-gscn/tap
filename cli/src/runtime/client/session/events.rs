@@ -3,10 +3,14 @@ use std::io;
 use super::reader::read_lines;
 use super::Session;
 
-mod handle;
-mod room;
 mod chat;
+mod combat;
 mod group;
+mod handle;
+mod quest;
+mod room;
+
+pub use handle::handle as apply_event;
 
 impl Session {
     pub fn poll_events(&mut self) -> io::Result<()> {

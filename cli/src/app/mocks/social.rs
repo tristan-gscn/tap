@@ -7,9 +7,9 @@ pub struct SocialMock {
 impl SocialMock {
     pub fn sample() -> Self {
         Self {
-            online_players: vec!["Ari".into(), "Bram".into(), "Lyra".into(), "Nyx".into(), "Sol".into()],
-            group_leader: "Ari".into(),
-            group_members: vec!["Bram".into(), "Lyra".into()],
+            online_players: Vec::new(),
+            group_leader: String::new(),
+            group_members: Vec::new(),
         }
     }
 }
