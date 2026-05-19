@@ -4,7 +4,7 @@
     import { placeInCircle } from '../utils/roomLayout';
     import { buildSprites, splitPositions } from '../utils/roomSprites';
     import ChatBox from '../components/ChatBox.svelte';
-    import { tapClient, type TapOk } from '../utils/TAPManager';
+    import { tapClient, type TapOk, type Direction } from '../utils/TAPManager';
 
     let room: Room = $state({
         room: {
@@ -99,6 +99,16 @@
         }
     };
 
+    const moveTo = async (direction: Direction) => {
+        const resp = await tap.move(direction);
+        if (resp.status === 'ok') {
+            const look = await tap.look();
+            if (look.status === 'ok' && look.type === 'look') {
+                applyLook(look.data);
+            }
+        }
+    };
+
     onMount(() => {
         let unsubscribe: (() => void) | null = null;
 
@@ -172,7 +182,7 @@
             />
 
             <div class="absolute inset-0 pointer-events-none">
-                {#each enemySprites as enemy, index (enemy.id)}
+                {#each enemySprites as enemy, index (`${enemy.id}-${index}`)}
                     <img
                         src={enemy.src}
                         alt="Enemy"
@@ -180,7 +190,7 @@
                         style={`left: ${spritePositions.enemy[index]?.x ?? 50}%; top: ${spritePositions.enemy[index]?.y ?? 50}%;`}
                     />
                 {/each}
-                {#each npcSprites as npc, index (npc.id)}
+                {#each npcSprites as npc, index (`${npc.id}-${index}`)}
                     <img
                         src={npc.src}
                         alt="NPC"
@@ -188,7 +198,7 @@
                         style={`left: ${spritePositions.npc[index]?.x ?? 50}%; top: ${spritePositions.npc[index]?.y ?? 50}%;`}
                     />
                 {/each}
-                {#each otherPlayerSprites as player, index (player.id)}
+                {#each otherPlayerSprites as player, index (`${player.id}-${index}`)}
                     <img
                         src={player.src}
                         alt="Other Player"
@@ -201,26 +211,54 @@
 
         {#if room.room.exits.north}
             <div
-                class="absolute left-1/2 top-0 h-[11%] w-60 -translate-x-1/2 bg-black border-l-[5px] border-r-[5px] border-white"
-            ></div>
+                class="absolute left-1/2 top-0 h-[11%] w-60 -translate-x-1/2 bg-black border-l-[5px] border-r-[5px] border-white flex items-center justify-center"
+            >
+                <button
+                    class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
+                    on:click={() => moveTo('north')}
+                >
+                    {room.room.exits.north}
+                </button>
+            </div>
         {/if}
 
         {#if room.room.exits.south}
             <div
-                class="absolute left-1/2 bottom-0 h-[11%] w-60 -translate-x-1/2 bg-black border-l-[5px] border-r-[5px] border-white"
-            ></div>
+                class="absolute left-1/2 bottom-0 h-[11%] w-60 -translate-x-1/2 bg-black border-l-[5px] border-r-[5px] border-white flex items-center justify-center"
+            >
+                <button
+                    class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
+                    on:click={() => moveTo('south')}
+                >
+                    {room.room.exits.south}
+                </button>
+            </div>
         {/if}
 
         {#if room.room.exits.east}
             <div
-                class="absolute right-0 top-1/2 h-60 w-[11%] -translate-y-1/2 bg-black border-t-[5px] border-b-[5px] border-white"
-            ></div>
+                class="absolute right-0 top-1/2 h-60 w-[11%] -translate-y-1/2 bg-black border-t-[5px] border-b-[5px] border-white flex items-center justify-center"
+            >
+                <button
+                    class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
+                    on:click={() => moveTo('east')}
+                >
+                    {room.room.exits.east}
+                </button>
+            </div>
         {/if}
 
         {#if room.room.exits.west}
             <div
-                class="absolute left-0 top-1/2 h-60 w-[11%] -translate-y-1/2 bg-black border-t-[5px] border-b-[5px] border-white"
-            ></div>
+                class="absolute left-0 top-1/2 h-60 w-[11%] -translate-y-1/2 bg-black border-t-[5px] border-b-[5px] border-white flex items-center justify-center"
+            >
+                <button
+                    class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
+                    on:click={() => moveTo('west')}
+                >
+                    {room.room.exits.west}
+                </button>
+            </div>
         {/if}
 
         <div class="absolute bottom-6 left-6 z-10 flex gap-3">
