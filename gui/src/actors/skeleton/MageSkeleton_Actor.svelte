@@ -1,8 +1,8 @@
 <script lang="ts">
     import Actor from "../Actor.svelte";
-    import {ActorAnimation} from "../ActorAnimation.ts";
+    import type { ActorProps } from "../ActorProps";
 
-    let { animation }: { animation: ActorAnimation } = $props()
+    let { animation }: ActorProps = $props()
 </script>
 
 <Actor

@@ -3,14 +3,7 @@
     import { useGltf, useGltfAnimations } from '@threlte/extras'
     import { derived } from 'svelte/store'
 
-    interface Props {
-        modelUrl: string
-        movementUrl?: string
-        generalUrl?: string
-        animation?: string
-        position?: [number, number, number]
-        scale?: number
-    }
+    import type { ActorProps } from './ActorProps'
 
     let { 
         modelUrl, 
@@ -19,7 +12,13 @@
         animation,
         position = [0, 0, 0],
         scale = 1
-    }: Props = $props()
+    }: ActorProps & {
+        modelUrl: string
+        movementUrl?: string
+        generalUrl?: string
+        position?: [number, number, number]
+        scale?: number
+    } = $props()
 
     const gltf = useGltf(modelUrl)
     const movementAnimations = movementUrl ? useGltf(movementUrl) : undefined
