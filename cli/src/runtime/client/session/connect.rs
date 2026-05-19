@@ -40,11 +40,8 @@ pub fn connect() -> io::Result<Session> {
     send_line(&mut stream, "WHO")?;
     let who = next_response(&mut reader, &mut read_buf)?;
 
-    send_line(&mut stream, "QUEST LIST")?;
-    let quest_list = next_response(&mut reader, &mut read_buf)?;
-
-    send_line(&mut stream, "QUEST STATUS")?;
-    let quest_status = next_response(&mut reader, &mut read_buf)?;
+    send_line(&mut stream, "QUESTS")?;
+    let quest_summary = next_response(&mut reader, &mut read_buf)?;
 
     let logs = vec![
         format!("[System] Connected to {} as {}", SERVER_ADDR, player_name),
@@ -61,11 +58,8 @@ pub fn connect() -> io::Result<Session> {
                 .collect();
         }
     }
-    if let ApiResponse::Ok { data, .. } = quest_list {
-        app.apply_quest_list(&data);
-    }
-    if let ApiResponse::Ok { data, .. } = quest_status {
-        app.apply_quest_status(&data);
+    if let ApiResponse::Ok { data, .. } = quest_summary {
+        app.apply_quest_summary(&data);
     }
 
     Ok(Session {

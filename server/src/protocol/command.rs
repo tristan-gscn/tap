@@ -19,6 +19,8 @@ pub enum GroupAction {
 #[derive(Debug)]
 pub enum QuestAction {
     List,
+    Summary,
+    Request { npc: String },
     Status,
     Accept { id: String },
     Complete { id: String },
@@ -81,6 +83,7 @@ impl Command {
                 .map(|target| Command::Talk { target }),
 
             "QUEST" => parse_quest(rest),
+            "QUESTS" => Ok(Command::Quest(QuestAction::Summary)),
 
             other => Ok(Command::Unknown(other.to_string())),
         }
@@ -155,6 +158,7 @@ fn parse_quest(rest: &str) -> Result<Command, Response> {
 
     let action = match sub.as_str() {
         "LIST" => QuestAction::List,
+        "SUMMARY" => QuestAction::Summary,
         "STATUS" => QuestAction::Status,
         "ACCEPT" => QuestAction::Accept {
             id: require(arg, "QUEST ACCEPT requires a quest id")?,
@@ -162,13 +166,15 @@ fn parse_quest(rest: &str) -> Result<Command, Response> {
         "COMPLETE" => QuestAction::Complete {
             id: require(arg, "QUEST COMPLETE requires a quest id")?,
         },
-        "" => return Err(Response::error(400, "QUEST requires a subcommand")),
-        other => {
+        "" => {
             return Err(Response::error(
                 400,
-                format!("Unknown QUEST subcommand: {}", other),
+                "QUEST requires an npc name",
             ))
         }
+        _ => QuestAction::Request {
+            npc: rest.to_string(),
+        },
     };
     Ok(Command::Quest(action))
 }

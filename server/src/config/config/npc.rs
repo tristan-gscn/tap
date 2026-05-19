@@ -6,6 +6,8 @@ pub struct Npc {
     pub description: String,
     pub dialogue: Vec<String>,
     pub stats: NpcStats,
+    #[serde(default)]
+    pub quests: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Default)]

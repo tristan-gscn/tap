@@ -2,6 +2,8 @@ mod accept;
 mod complete;
 mod list;
 mod progress;
+mod request;
+mod summary;
 mod status;
 
 use std::sync::Arc;
@@ -25,6 +27,8 @@ pub async fn quest(action: QuestAction, addr: &str, state: Arc<RwLock<GameState>
 
     match action {
         QuestAction::List => list::list(&state, &name),
+        QuestAction::Summary => summary::summary(&state, &name),
+        QuestAction::Request { npc } => request::request(&mut state, &name, npc),
         QuestAction::Status => status::status(&state, &name),
         QuestAction::Accept { id } => accept::accept(&mut state, &name, id),
         QuestAction::Complete { id } => complete::complete(&mut state, &name, id),

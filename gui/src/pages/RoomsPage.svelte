@@ -12,9 +12,9 @@
             description: 'Room description text',
             exits: {
                 north: 'room.north_id',
-                south: 'room.south_id',
-                east: '',
-                west: 'x'
+                south: '',
+                east: 'x',
+                west: ''
             }
         },
         players: ['username1', 'username2'],

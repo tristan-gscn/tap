@@ -84,6 +84,8 @@ fn apply_attack(session: &mut Session, data: &Value) {
 fn apply_quest(session: &mut Session, data: &Value) {
     match data.get("action").and_then(|v| v.as_str()).unwrap_or("") {
         "list" => session.app.apply_quest_list(data),
+        "summary" => session.app.apply_quest_summary(data),
+        "request" => session.app.apply_quest_request(data),
         "status" => session.app.apply_quest_status(data),
         "complete" => {
             if let Some(total) = data.get("total_xp").and_then(|v| v.as_i64()) {
