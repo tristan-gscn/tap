@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, tick } from 'svelte';
-    import { TAPManager } from '../utils/TAPManager';
+    import { tapClient } from '../utils/TAPManager';
 
     type ChatMessage = {
         from: string;
@@ -14,7 +14,7 @@
     let isAtBottom = true;
     const bottomThreshold = 8;
 
-    const tap = new TAPManager();
+    const tap = tapClient;
 
     const updateIsAtBottom = () => {
         if (!scrollContainer) {
@@ -36,20 +36,39 @@
         }
     };
 
-    onMount(async () => {
-        await tap.connect();
-        const name = "LAMBDA"
-        await tap.connectPlayer(name);
+    function resolveName(): string {
+        const stored = localStorage.getItem('tap-player-name');
+        if (stored && stored.trim().length > 0) {
+            return stored;
+        }
+        const name = `gui-${Math.floor(Math.random() * 9000 + 1000)}`;
+        localStorage.setItem('tap-player-name', name);
+        return name;
+    }
 
-        tap.onEvent((evt) => {
-            const data = evt.data as { event?: string; from?: string; text?: string; scope?: string };
-            if (!data || !data.event) {
-                return;
-            }
-            if (data.event === 'chat_room' || data.event === 'chat_global' || data.event === 'chat_group') {
-                pushMessage(data.from ?? '?', data.text ?? '', data.scope ?? '');
-            }
-        });
+    onMount(() => {
+        let unsubscribe: (() => void) | null = null;
+
+        const init = async () => {
+            await tap.connect();
+            await tap.connectPlayer(resolveName());
+
+            unsubscribe = tap.onEvent((evt) => {
+                const data = evt.data as { event?: string; from?: string; text?: string; scope?: string };
+                if (!data || !data.event) {
+                    return;
+                }
+                if (data.event === 'chat_room' || data.event === 'chat_global' || data.event === 'chat_group') {
+                    pushMessage(data.from ?? '?', data.text ?? '', data.scope ?? '');
+                }
+            });
+        };
+
+        void init();
+
+        return () => {
+            unsubscribe?.();
+        };
     });
 
     async function sendMessage() {
@@ -74,7 +93,7 @@
     <div
         class="no-scrollbar h-60 overflow-y-auto px-3 py-2 text-sm"
         bind:this={scrollContainer}
-        on:scroll={updateIsAtBottom}
+        onscroll={updateIsAtBottom}
     >
         <div class="min-h-full flex flex-col justify-end">
             {#each messages as msg, index (index)}
@@ -91,7 +110,7 @@
             placeholder="Type a message..."
             class="w-full bg-black text-white placeholder:text-white/50 focus:outline-none"
             bind:value={message}
-            on:keydown={onKeydown}
+            onkeydown={onKeydown}
         />
     </div>
 </div>

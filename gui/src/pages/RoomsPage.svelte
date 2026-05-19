@@ -1,25 +1,128 @@
 <script lang="ts">
     import type { Room } from '../models/Room';
+    import { onMount } from 'svelte';
     import { placeInCircle } from '../utils/roomLayout';
     import { buildSprites, splitPositions } from '../utils/roomSprites';
     import ChatBox from '../components/ChatBox.svelte';
+    import { tapClient, type TapOk } from '../utils/TAPManager';
 
-    // TODO: connect backend to replace fake values
     let room: Room = $state({
         room: {
-            id: 'room.identifier',
-            name: 'Room Display Name',
-            description: 'Room description text',
+            id: '',
+            name: '',
+            description: '',
             exits: {
-                north: 'room.north_id',
+                north: '',
                 south: '',
-                east: 'x',
+                east: '',
                 west: ''
             }
         },
-        players: ['username1', 'username2'],
-        items: ['item.id1', 'item.id2'],
-        npcs: ['npc.id1', 'npc.id2']
+        players: [],
+        items: [],
+        npcs: []
+    });
+
+    const tap = tapClient;
+
+    const resolveName = () => {
+        const stored = localStorage.getItem('tap-player-name');
+        if (stored && stored.trim().length > 0) {
+            return stored;
+        }
+        const name = `gui-${Math.floor(Math.random() * 9000 + 1000)}`;
+        localStorage.setItem('tap-player-name', name);
+        return name;
+    };
+
+    const applyLook = (data: unknown) => {
+        const payload = data as {
+            room?: { id?: string; name?: string; description?: string; exits?: Record<string, string> };
+            players?: string[];
+            items?: string[];
+            npcs?: Array<{ type?: string } | string>;
+        };
+        room = {
+            room: {
+                id: payload.room?.id ?? '',
+                name: payload.room?.name ?? '',
+                description: payload.room?.description ?? '',
+                exits: {
+                    north: payload.room?.exits?.north ?? '',
+                    south: payload.room?.exits?.south ?? '',
+                    east: payload.room?.exits?.east ?? '',
+                    west: payload.room?.exits?.west ?? ''
+                }
+            },
+            players: payload.players ?? [],
+            items: payload.items ?? [],
+            npcs: (payload.npcs ?? []).map((n) => {
+                if (typeof n === 'string') {
+                    return n;
+                }
+                return n.type ?? '?';
+            })
+        };
+    };
+
+    const handleRoomEvent = (data: Record<string, unknown>) => {
+        const event = data.event;
+        if (event === 'presence_enter') {
+            const name = data.name as string | undefined;
+            if (name && !room.players.includes(name)) {
+                room = { ...room, players: [...room.players, name] };
+            }
+        }
+        if (event === 'presence_leave') {
+            const name = data.name as string | undefined;
+            if (name) {
+                room = { ...room, players: room.players.filter((p) => p !== name) };
+            }
+        }
+        if (event === 'item_taken') {
+            const item = data.item as string | undefined;
+            if (item) {
+                room = { ...room, items: room.items.filter((i) => i !== item) };
+            }
+        }
+        if (event === 'item_dropped') {
+            const item = data.item as string | undefined;
+            if (item && !room.items.includes(item)) {
+                room = { ...room, items: [...room.items, item] };
+            }
+        }
+        if (event === 'npc_killed') {
+            const npc = data.npc as string | undefined;
+            if (npc) {
+                room = { ...room, npcs: room.npcs.filter((n) => n !== npc) };
+            }
+        }
+    };
+
+    onMount(() => {
+        let unsubscribe: (() => void) | null = null;
+
+        const init = async () => {
+            await tap.connect();
+            await tap.connectPlayer(resolveName());
+            const resp = await tap.look();
+            if (resp.status === 'ok' && resp.type === 'look') {
+                applyLook(resp.data);
+            }
+            unsubscribe = tap.onEvent((evt: TapOk) => {
+                const data = (evt.data ?? {}) as Record<string, unknown>;
+                if (!data.event) {
+                    return;
+                }
+                handleRoomEvent(data);
+            });
+        };
+
+        void init();
+
+        return () => {
+            unsubscribe?.();
+        };
     });
 
     const enemyAssets = ['npc_en1.png'];

@@ -23,6 +23,7 @@ export class TAPManager {
     private pending: Array<(resp: TapResponse) => void> = [];
     private eventHandlers: TapEventHandler[] = [];
     private buffer = '';
+    private connectedName: string | null = null;
 
     constructor(url?: string) {
         const envUrl = (import.meta as { env?: Record<string, string> }).env?.VITE_TAP_BRIDGE_URL;
@@ -103,7 +104,15 @@ export class TAPManager {
     }
 
     connectPlayer(name: string): Promise<TapResponse> {
-        return this.sendRaw(`CONNECT ${name}`);
+        if (this.connectedName === name) {
+            return Promise.resolve({ status: 'ok', type: 'connect', data: { name } });
+        }
+        return this.sendRaw(`CONNECT ${name}`).then((resp) => {
+            if (resp.status === 'ok' && resp.type === 'connect') {
+                this.connectedName = name;
+            }
+            return resp;
+        });
     }
 
     who(): Promise<TapResponse> {
@@ -190,3 +199,5 @@ export class TAPManager {
         return this.sendRaw('QUIT');
     }
 }
+
+export const tapClient = new TAPManager();
