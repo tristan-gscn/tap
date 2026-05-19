@@ -4,8 +4,11 @@
     import {
         ActorAnimation
     } from "./actors/ActorAnimation";
+    import { AdventurerProp, SkeletonProp } from "./actors/Props";
     import KnightCharacter_Actor
         from "./actors/character/KnightCharacter_Actor.svelte";
+    import WarriorSkeleton_Actor
+        from "./actors/skeleton/WarriorSkeleton_Actor.svelte";
 </script>
 
 <T.PerspectiveCamera makeDefault position={[5, 5, 5]}>
@@ -15,4 +18,8 @@
 <T.DirectionalLight position={[3, 10, 10]} intensity={1} />
 <T.AmbientLight intensity={0.5} />
 
-<KnightCharacter_Actor animation={ActorAnimation.Walking_A} />
+<WarriorSkeleton_Actor
+    animation={ActorAnimation.Walking_A}
+    rightHandProp={SkeletonProp.Axe}
+    leftHandProp={SkeletonProp.ShieldLargeA}
+/>
