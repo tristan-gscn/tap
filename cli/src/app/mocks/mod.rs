@@ -4,4 +4,4 @@ mod social;
 
 pub use room::{RoomMock, RoomNpc};
 pub use status::{PlayerStatusMock, QuestEntry};
-pub use social::SocialMock;
+pub use social::{GroupInvite, SocialMock};

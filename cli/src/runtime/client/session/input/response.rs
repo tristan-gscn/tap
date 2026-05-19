@@ -110,12 +110,76 @@ fn apply_group(session: &mut Session, data: &Value) {
     let me = session.app.status.name.clone();
     match action {
         "create" => {
+            session.app.social.group_id = data.get("group").and_then(|v| v.as_u64());
             session.app.social.group_leader = me.clone();
             session.app.social.group_members = vec![me];
+            session.app.social.group_invites.clear();
+            if let Some(gid) = data.get("group").and_then(|v| v.as_u64()) {
+                session
+                    .app
+                    .logs
+                    .push(format!("! created group {}", gid));
+            }
+        }
+        "join" => {
+            let gid = data.get("group").and_then(|v| v.as_u64());
+            if let Some(id) = gid {
+                session.app.social.group_id = Some(id);
+                if let Some(invite) = session
+                    .app
+                    .social
+                    .group_invites
+                    .iter()
+                    .find(|i| i.group_id == id)
+                {
+                    session.app.social.group_leader = invite.leader.clone();
+                }
+                session
+                    .app
+                    .social
+                    .group_invites
+                    .retain(|i| i.group_id != id);
+                session
+                    .app
+                    .logs
+                    .push(format!("! joined group {}", id));
+            }
+            let leader = session.app.social.group_leader.clone();
+            if session.app.social.group_members.is_empty() {
+                if leader.is_empty() {
+                    session.app.social.group_members = vec![me.clone()];
+                } else {
+                    session.app.social.group_members = vec![leader.clone(), me.clone()];
+                }
+            } else {
+                if !leader.is_empty()
+                    && !session.app.social.group_members.iter().any(|m| m == &leader)
+                {
+                    session.app.social.group_members.insert(0, leader);
+                }
+                if !session.app.social.group_members.iter().any(|m| m == &me) {
+                    session.app.social.group_members.push(me);
+                }
+            }
         }
         "leave" => {
+            session.app.social.group_id = None;
             session.app.social.group_leader.clear();
             session.app.social.group_members.clear();
+        }
+        "invite" => {
+            if let Some(target) = data.get("invited").and_then(|v| v.as_str()) {
+                let gid = session
+                    .app
+                    .social
+                    .group_id
+                    .map(|id| id.to_string())
+                    .unwrap_or_else(|| "?".to_string());
+                session
+                    .app
+                    .logs
+                    .push(format!("! invited {} to group {}", target, gid));
+            }
         }
         _ => {}
     }
