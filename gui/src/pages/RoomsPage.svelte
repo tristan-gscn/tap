@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Room } from '../models/Room';
-    import { onMount } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import { placeInCircle } from '../utils/roomLayout';
     import { buildSprites, splitPositions } from '../utils/roomSprites';
     import ChatBox from '../components/ChatBox.svelte';
@@ -24,6 +24,7 @@
     });
 
     const tap = tapClient;
+    const dispatch = createEventDispatcher<{ quit: void }>();
 
     const resolveName = () => {
         const stored = localStorage.getItem('tap-player-name');
@@ -107,6 +108,12 @@
                 applyLook(look.data);
             }
         }
+    };
+
+    const handleQuit = async () => {
+        localStorage.removeItem('tap-player-name');
+        await tap.quit();
+        dispatch('quit');
     };
 
     onMount(() => {
@@ -215,7 +222,7 @@
             >
                 <button
                     class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
-                    on:click={() => moveTo('north')}
+                    onclick={() => moveTo('north')}
                 >
                     {room.room.exits.north}
                 </button>
@@ -228,7 +235,7 @@
             >
                 <button
                     class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
-                    on:click={() => moveTo('south')}
+                    onclick={() => moveTo('south')}
                 >
                     {room.room.exits.south}
                 </button>
@@ -241,7 +248,7 @@
             >
                 <button
                     class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
-                    on:click={() => moveTo('east')}
+                    onclick={() => moveTo('east')}
                 >
                     {room.room.exits.east}
                 </button>
@@ -254,14 +261,14 @@
             >
                 <button
                     class="text-white transition-all hover:text-yellow-500 text-3xl cursor-pointer"
-                    on:click={() => moveTo('west')}
+                    onclick={() => moveTo('west')}
                 >
                     {room.room.exits.west}
                 </button>
             </div>
         {/if}
 
-        <div class="absolute bottom-6 left-6 z-10 flex gap-3">
+        <div class="absolute bottom-6 left-6 z-10 flex items-center gap-3">
             <button
                 class="bg-purple-500  text-white text-2xl px-4 py-2"
             >
@@ -276,6 +283,14 @@
                 class="bg-gray-500 hover:bg-purple-500 text-white text-2xl px-4 py-2 cursor-pointer"
             >
                 SOCIAL
+            </button>
+        </div>
+        <div class="absolute bottom-6 right-6 z-10">
+            <button
+                class="bg-red-500 hover:bg-red-600 text-white text-2xl px-4 py-2 cursor-pointer"
+                onclick={handleQuit}
+            >
+                QUIT
             </button>
         </div>
     </div>
