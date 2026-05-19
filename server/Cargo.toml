@@ -16,11 +16,10 @@ sea-orm = { version = "1.1.20", features = [
 ] }
 
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-
-tracing = "0.1"
+serde_json = "1.0.149"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 chrono = "0.4.44"
 env = "1.0.1"
 dotenvy = "0.15.7"
 serde_yaml = "0.9.34"
+tracing = "0.1.44"
