@@ -36,6 +36,7 @@ pub enum Command {
     Group(GroupAction),
     Move { direction: Direction },
     Attack { target: String },
+    Talk { target: String },
     Quest(QuestAction),
     Quit,
     Unknown(String),
@@ -75,6 +76,9 @@ impl Command {
 
             "ATTACK" => require(rest, "ATTACK requires a target")
                 .map(|target| Command::Attack { target }),
+
+            "TALK" => require(rest, "TALK requires a target")
+                .map(|target| Command::Talk { target }),
 
             "QUEST" => parse_quest(rest),
 
