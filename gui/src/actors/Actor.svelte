@@ -7,7 +7,7 @@
         modelUrl: string
         movementUrl?: string
         generalUrl?: string
-        animationName?: string
+        animation?: string
         position?: [number, number, number]
         scale?: number
     }
@@ -16,7 +16,7 @@
         modelUrl, 
         movementUrl, 
         generalUrl, 
-        animationName = 'Idle_A',
+        animation,
         position = [0, 0, 0],
         scale = 1
     }: Props = $props()
@@ -44,9 +44,13 @@
 
     const { actions } = useGltfAnimations(combinedGltf)
 
+    $inspect($actions)
     $effect(() => {
-        if ($actions[animationName]) {
-            $actions[animationName].play()
+        if (animation && $actions[animation]) {
+            $actions[animation].play()
+            return () => {
+                $actions[animation]?.stop()
+            }
         }
     })
 </script>

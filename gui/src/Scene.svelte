@@ -1,7 +1,11 @@
 <script lang="ts">
     import { T } from '@threlte/core'
     import { OrbitControls } from '@threlte/extras'
-    import Actor from './Actor.svelte'
+    import MageSkeleton_Actor
+        from "./actors/skeleton/MageSkeleton_Actor.svelte";
+    import {
+        Skeleton_ActorAnimation
+    } from "./actors/skeleton/Skeleton_ActorAnimation";
 </script>
 
 <T.PerspectiveCamera makeDefault position={[5, 5, 5]}>
@@ -11,9 +15,4 @@
 <T.DirectionalLight position={[3, 10, 10]} intensity={1} />
 <T.AmbientLight intensity={0.5} />
 
-<Actor 
-    modelUrl="/models/Skeleton_Rogue.glb"
-    movementUrl="/models/Rig_Medium_MovementBasic.glb"
-    generalUrl="/models/Rig_Medium_General.glb"
-    animationName="Walking_A"
-/>
+<MageSkeleton_Actor animation={Skeleton_ActorAnimation.Death_B} />
