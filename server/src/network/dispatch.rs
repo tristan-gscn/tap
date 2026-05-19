@@ -16,6 +16,7 @@ pub async fn dispatch(
     match cmd {
         Command::Connect { name } => session::connect(name, addr, tx, state).await,
         Command::Who => session::who(state).await,
+        Command::Status => session::status(addr, state).await,
         Command::Look => world::look(addr, state).await,
         Command::Chat { scope, text } => chat::chat(scope, text, addr, state).await,
         Command::Take { item } => inventory::take(item, addr, state).await,

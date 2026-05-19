@@ -30,6 +30,7 @@ pub enum QuestAction {
 pub enum Command {
     Connect { name: String },
     Who,
+    Status,
     Look,
     Chat { scope: ChatScope, text: String },
     Take { item: String },
@@ -55,6 +56,7 @@ impl Command {
                 .map(|name| Command::Connect { name }),
 
             "WHO" => Ok(Command::Who),
+            "STATUS" => Ok(Command::Status),
             "LOOK" => Ok(Command::Look),
             "INVENTORY" => Ok(Command::Inventory),
             "QUIT" => Ok(Command::Quit),
