@@ -1,4 +1,4 @@
-export enum Skeleton_ActorAnimation {
+export enum ActorAnimation {
     Death_A = "Death_A",
     Death_A_Pose = "Death_A_Pose",
     Death_B = "Death_B",

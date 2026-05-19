@@ -1,13 +1,13 @@
 <script lang="ts">
     import Actor from "../Actor.svelte";
-    import {Skeleton_ActorAnimation} from "./Skeleton_ActorAnimation.ts";
+    import {ActorAnimation} from "../ActorAnimation.ts";
 
-    let { animation }: { animation: Skeleton_ActorAnimation } = $props()
+    let { animation }: { animation: ActorAnimation } = $props()
 </script>
 
 <Actor
         modelUrl="/models/skeleton/mage.glb"
-        movementUrl="/models/skeleton/rig_movement.glb"
-        generalUrl="/models/skeleton/rig_general.glb"
+        movementUrl="/models/animations/movement.glb"
+        generalUrl="/models/animations/general.glb"
         animation={animation}
 />
