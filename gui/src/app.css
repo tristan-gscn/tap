@@ -129,3 +129,191 @@
 * {
   font-family: 'Poppins', sans-serif;
 }
+
+/* ── Glassmorphism UI ────────────────────────────────────────────── */
+
+.tap-panel {
+  background: rgba(18, 14, 22, 0.32);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  color: #ffffff;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.10) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 0.75rem 0.9rem;
+}
+
+.tap-panel-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.92);
+  padding-bottom: 0.45rem;
+  margin-bottom: 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tap-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.15s ease, transform 0.06s ease, border-color 0.15s ease;
+}
+.tap-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.tap-btn:active:not(:disabled) { transform: translateY(1px); }
+.tap-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.tap-btn-primary {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-weight: 600;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.tap-btn-primary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.tap-btn-danger {
+  background: linear-gradient(180deg, rgba(220, 70, 70, 0.26), rgba(140, 30, 30, 0.18));
+  color: #ffd9d9;
+  border-color: rgba(255, 100, 100, 0.35);
+}
+.tap-btn-danger:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(220, 70, 70, 0.4), rgba(140, 30, 30, 0.28));
+}
+
+.tap-btn-accept {
+  background: linear-gradient(180deg, rgba(110, 200, 90, 0.26), rgba(40, 130, 30, 0.18));
+  color: #e6ffd6;
+  border-color: rgba(110, 200, 90, 0.4);
+}
+.tap-btn-accept:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(110, 200, 90, 0.4), rgba(40, 130, 30, 0.28));
+}
+
+.tap-slot {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 2px 8px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.06s ease;
+}
+.tap-slot:hover:not(.tap-slot-empty) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+.tap-slot:active:not(.tap-slot-empty) { transform: translateY(1px); }
+.tap-slot-empty {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.tap-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(18, 14, 22, 0.7);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.7rem;
+  color: #ffffff;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 50;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+.tap-slot:hover .tap-tooltip { opacity: 1; }
+
+.tap-input {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.tap-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.tap-bar-bg {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) inset;
+  overflow: hidden;
+}
+.tap-bar-fill {
+  height: 100%;
+  background: linear-gradient(180deg, rgba(150, 240, 130, 0.95) 0%, rgba(60, 170, 70, 0.75) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 0 12px rgba(110, 220, 90, 0.4);
+  transition: width 0.35s ease;
+}
+.tap-bar-fill.hp-low {
+  background: linear-gradient(180deg, rgba(255, 110, 110, 0.95) 0%, rgba(180, 40, 40, 0.75) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 0 12px rgba(255, 80, 80, 0.4);
+}
+.tap-bar-fill.hp-mid {
+  background: linear-gradient(180deg, rgba(255, 200, 110, 0.95) 0%, rgba(200, 130, 40, 0.75) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 0 12px rgba(255, 180, 80, 0.4);
+}

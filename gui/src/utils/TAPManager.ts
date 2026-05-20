@@ -103,16 +103,21 @@ export class TAPManager {
         });
     }
 
-    connectPlayer(name: string): Promise<TapResponse> {
+    connectPlayer(name: string, playerClass?: string): Promise<TapResponse> {
         if (this.connectedName === name) {
-            return Promise.resolve({ status: 'ok', type: 'connect', data: { name } });
+            return Promise.resolve({ status: 'ok', type: 'connect', data: { name, class: playerClass } });
         }
-        return this.sendRaw(`CONNECT ${name}`).then((resp) => {
+        const cmd = playerClass ? `CONNECT ${name} ${playerClass}` : `CONNECT ${name}`;
+        return this.sendRaw(cmd).then((resp) => {
             if (resp.status === 'ok' && resp.type === 'connect') {
                 this.connectedName = name;
             }
             return resp;
         });
+    }
+
+    status(): Promise<TapResponse> {
+        return this.sendRaw('STATUS');
     }
 
     who(): Promise<TapResponse> {

@@ -16,7 +16,7 @@ pub async fn dispatch(
     state: Arc<RwLock<GameState>>,
 ) -> Response {
     match cmd {
-        Command::Connect { name } => session::connect(name, addr, tx, state).await,
+        Command::Connect { name, class } => session::connect(name, class, addr, tx, state).await,
         Command::Who => session::who(state).await,
         Command::Status => session::status(addr, state).await,
         Command::Look => world::look(addr, state).await,

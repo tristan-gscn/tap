@@ -28,7 +28,7 @@ pub enum QuestAction {
 
 #[derive(Debug)]
 pub enum Command {
-    Connect { name: String },
+    Connect { name: String, class: Option<String> },
     Who,
     Status,
     Look,
@@ -54,8 +54,7 @@ impl Command {
         let rest = parts.next().unwrap_or("").trim();
 
         match verb.as_str() {
-            "CONNECT" => require(rest, "CONNECT requires a name")
-                .map(|name| Command::Connect { name }),
+            "CONNECT" => parse_connect(rest),
 
             "WHO" => Ok(Command::Who),
             "STATUS" => Ok(Command::Status),
@@ -92,6 +91,17 @@ impl Command {
             other => Ok(Command::Unknown(other.to_string())),
         }
     }
+}
+
+/// Parses the `CONNECT` command and its scope.
+fn parse_connect(rest: &str) -> Result<Command, Response> {
+    let mut p = rest.splitn(2, ' ');
+    let name = p.next().unwrap_or("").trim().to_string();
+    if name.is_empty() {
+        return Err(Response::error(400, "CONNECT requires a name"));
+    }
+    let class = p.next().map(|s| s.trim().to_string()).filter(|s| !s.is_empty());
+    Ok(Command::Connect { name, class })
 }
 
 /// Helper function to ensure that a command argument is present.

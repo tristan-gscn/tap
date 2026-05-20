@@ -1,112 +1,110 @@
 world:
   locations:
     start:
-      name: "Village Square"
-      description: "A bustling square with cobblestone paths."
+      name: "Dungeon Entrance"
+      description: "A torch-lit antechamber. Damp stone walls echo with distant skittering."
+      kind: "dungeon"
       exits:
-        north: "tavern"
-        east: "shop"
+        north: "hall"
       spawns:
-        - npc_type: "guard"
+        - npc_type: "skeleton_warrior"
           count: 1
       items:
-        - "herbs"
-        - "lantern"
+        - "torch"
 
-    tavern:
-      name: "The Prancing Pony"
-      description: "A cozy tavern filled with warmth and laughter."
+    hall:
+      name: "Pillared Hall"
+      description: "A long hall lined with cracked pillars. Bones litter the floor."
+      kind: "dungeon"
       exits:
         south: "start"
-        north: "cellar"
+        east: "vault"
+      spawns:
+        - npc_type: "skeleton_rogue"
+          count: 2
       items:
-        - "ale"
+        - "bone_dust"
 
-    cellar:
-      name: "Dark Cellar"
-      description: "A damp cellar crawling with vermin."
+    vault:
+      name: "Forgotten Vault"
+      description: "A small vault. A heavy iron chest squats in the center."
+      kind: "dungeon"
       exits:
-        south: "tavern"
+        west: "hall"
       spawns:
-        - npc_type: "rat"
-          count: 3
-
-    shop:
-      name: "General Store"
-      description: "Shelves lined with various goods and supplies."
-      exits:
-        west: "start"
-      spawns:
-        - npc_type: "merchant"
+        - npc_type: "skeleton_mage"
           count: 1
+      items:
+        - "ancient_coin"
 
   items:
-    ale:
-      name: "Frothy Ale"
-      description: "A refreshing drink that restores energy."
+    torch:
+      name: "Burning Torch"
+      description: "A pitch-soaked torch, still alight."
       obtainable: true
 
-    herbs:
-      name: "Healing Herbs"
-      description: "A small bundle of fragrant medicinal herbs."
+    bone_dust:
+      name: "Bone Dust"
+      description: "A handful of powdered bone. Useful for alchemy."
       obtainable: true
 
-    lantern:
-      name: "Old Lantern"
-      description: "A rusty lantern that still gives a faint light."
+    ancient_coin:
+      name: "Ancient Coin"
+      description: "A tarnished coin from a forgotten realm."
       obtainable: true
 
   npcs:
-    guard:
-      name: "Village Guard"
-      description: "A stern-looking guard watching over the square."
+    skeleton_warrior:
+      name: "Skeleton Warrior"
+      description: "An armored skeleton clutching a rusted axe."
+      model: "warrior"
       dialogue:
-        - "Stay safe, traveler."
-        - "The roads can be dangerous."
+        - "*the skeleton rattles its bones*"
       stats:
-        hp: 20
+        hp: 18
         attack: 4
       quests:
-        - "pest_control"
+        - "clear_hall"
 
-    merchant:
-      name: "Shop Keeper"
-      description: "A friendly merchant eager to trade."
+    skeleton_rogue:
+      name: "Skeleton Rogue"
+      description: "A nimble skeleton with a curved blade."
+      model: "rogue"
       dialogue:
-        - "Welcome to my shop!"
-        - "What can I get for you today?"
-      stats:
-        hp: 15
-        attack: 0
-      quests:
-        - "herb_gathering"
-
-    rat:
-      name: "Giant Rat"
-      description: "A mangy rat the size of a dog."
-      dialogue:
-        - "*hisses*"
+        - "*hisses through fleshless teeth*"
       stats:
         hp: 12
-        attack: 3
+        attack: 5
+
+    skeleton_mage:
+      name: "Skeleton Mage"
+      description: "A robed skeleton, ember-eyed, gripping a staff."
+      model: "mage"
+      dialogue:
+        - "*chants in a forgotten tongue*"
+      stats:
+        hp: 14
+        attack: 6
+      quests:
+        - "vault_clear"
 
   quests:
-    herb_gathering:
-      name: "Herb Gathering"
-      description: "Collect healing herbs for the village guard."
-      objective:
-        kind: collect
-        target: herbs
-        count: 1
-      reward:
-        xp: 50
-
-    pest_control:
-      name: "Pest Control"
-      description: "Clear the cellar of giant rats."
+    clear_hall:
+      name: "Clear the Hall"
+      description: "Destroy the rogue skeletons haunting the pillared hall."
       objective:
         kind: kill
-        target: rat
-        count: 3
+        target: skeleton_rogue
+        count: 2
       reward:
-        xp: 120
+        xp: 100
+
+    vault_clear:
+      name: "Silence the Mage"
+      description: "Bring the skeleton mage to its final rest."
+      objective:
+        kind: kill
+        target: skeleton_mage
+        count: 1
+      reward:
+        xp: 150

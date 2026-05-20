@@ -35,14 +35,33 @@ pub async fn look(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
         .map(|p| &p.name)
         .collect();
 
+    let players_detail: Vec<Value> = state
+        .players
+        .values()
+        .filter(|p| p.room == room_id)
+        .map(|p| {
+            json!({
+                "name": p.name,
+                "class": p.class,
+                "hp": p.hp,
+                "max_hp": p.max_hp,
+            })
+        })
+        .collect();
+
     let npcs: Vec<Value> = state
         .world
         .npcs_in(&room_id)
         .iter()
         .map(|n| {
+            let cfg_npc = cfg.world.npcs.get(&n.npc_type);
+            let display_name = cfg_npc.map(|c| c.name.as_str()).unwrap_or(n.npc_type.as_str());
+            let model = cfg_npc.and_then(|c| c.model.clone());
             json!({
                 "id": n.id,
                 "type": n.npc_type,
+                "name": display_name,
+                "model": model,
                 "hp": n.hp,
                 "max_hp": n.max_hp,
             })
@@ -54,12 +73,18 @@ pub async fn look(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
         json!({
             "room": {
                 "id": room_id,
+                "kind": loc.kind_or_default(),
                 "name": loc.name,
                 "description": loc.description,
                 "exits": exits,
             },
             "players": players,
+            "players_detail": players_detail,
             "items": state.world.items_in(&room_id),
+            "items_detail": state.world.items_in(&room_id).iter().map(|id| {
+                let name = cfg.world.items.get(id).map(|i| i.name.as_str()).unwrap_or(id.as_str());
+                json!({ "id": id, "name": name })
+            }).collect::<Vec<_>>(),
             "npcs": npcs,
         }),
     )

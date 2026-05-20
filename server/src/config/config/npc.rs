@@ -8,6 +8,8 @@ pub struct Npc {
     pub stats: NpcStats,
     #[serde(default)]
     pub quests: Vec<String>,
+    #[serde(default)]
+    pub model: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Default)]
