@@ -33,28 +33,4 @@
             </button>
         {/each}
     </div>
-
-    {#if game.itemsDetail.length > 0}
-        <div class="mt-3 border-t border-white/10 pt-2.5">
-            <div class="mb-1.5 text-[11px] text-white/60">On the floor</div>
-            <ul class="space-y-1">
-                {#each game.itemsDetail as item (item.id)}
-                    {@const Icon = resolveItemIcon(item.id)}
-                    <li class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-[12px]">
-                        <span class="inline-flex items-center gap-2">
-                            <Icon size={14} class="text-white/85" />
-                            <span>{item.name}</span>
-                        </span>
-                        <button
-                            type="button"
-                            class="tap-btn tap-btn-primary px-2 py-0.5 text-[10px]"
-                            onclick={() => game.take(item.id)}
-                        >
-                            take
-                        </button>
-                    </li>
-                {/each}
-            </ul>
-        </div>
-    {/if}
 </div>

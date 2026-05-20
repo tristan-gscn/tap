@@ -8,7 +8,7 @@
         <span>Quests</span>
         <button
             type="button"
-            class="tap-btn px-1.5 py-0.5"
+            class="tap-btn px-1.5 py-0.5 cursor-pointer"
             onclick={() => {
                 game.refreshQuestList();
                 game.refreshQuestStatus();
@@ -52,14 +52,14 @@
                             {#if q.status === 'available'}
                                 <button
                                     type="button"
-                                    class="tap-btn tap-btn-primary px-2 py-0.5 text-[10.5px]"
+                                    class="tap-btn tap-btn-primary px-2 py-0.5 cursor-pointer"
                                     onclick={() => game.acceptQuest(q.id)}>accept</button
                                 >
                             {/if}
                             {#if active && active.progress >= active.required && !active.completed}
                                 <button
                                     type="button"
-                                    class="tap-btn tap-btn-accept px-2 py-0.5 text-[10.5px]"
+                                    class="tap-btn tap-btn-accept px-2 py-0.5 cursor-pointer"
                                     onclick={() => game.completeQuest(q.id)}>complete</button
                                 >
                             {/if}

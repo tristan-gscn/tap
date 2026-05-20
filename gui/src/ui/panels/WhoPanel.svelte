@@ -1,19 +1,11 @@
 <script lang="ts">
-    import RefreshCw from 'lucide-svelte/icons/refresh-cw';
+    import LiquidGlassPanel from '../LiquidGlassPanel.svelte';
     import { game } from '../../state/game.svelte';
 </script>
 
-<div class="tap-panel">
-    <div class="tap-panel-title">
+<LiquidGlassPanel>
+    <div class="mb-2 flex items-center justify-between text-[0.82rem] font-medium text-white/90">
         <span>Players</span>
-        <button
-            type="button"
-            class="tap-btn px-1.5 py-0.5"
-            onclick={() => game.refreshWho()}
-            aria-label="refresh"
-        >
-            <RefreshCw size={11} />
-        </button>
     </div>
     {#if game.onlinePlayers.length === 0}
         <div class="text-[12px] text-white/55">No one online.</div>
@@ -26,4 +18,4 @@
             {/each}
         </ul>
     {/if}
-</div>
+</LiquidGlassPanel>
