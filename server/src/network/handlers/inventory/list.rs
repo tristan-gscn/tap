@@ -15,7 +15,8 @@ pub async fn inventory(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     };
 
     let cfg = crate::config::get();
-    let items = state.players[&name].inventory.clone();
+    let player = &state.players[&name];
+    let items = player.inventory.clone();
     let items_detail: Vec<_> = items
         .iter()
         .map(|id| {
@@ -30,6 +31,13 @@ pub async fn inventory(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
         .collect();
     Response::ok(
         "inventory",
-        json!({ "items": items, "items_detail": items_detail }),
+        json!({
+            "items": items,
+            "items_detail": items_detail,
+            "equipped": {
+                "right": player.equipped_right,
+                "left": player.equipped_left,
+            }
+        }),
     )
 }

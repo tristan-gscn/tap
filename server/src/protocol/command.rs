@@ -1,5 +1,6 @@
 use crate::config::Direction;
 use crate::protocol::response::Response;
+use crate::state::player::EquipSlot;
 
 #[derive(Debug)]
 pub enum ChatScope {
@@ -35,6 +36,8 @@ pub enum Command {
     Chat { scope: ChatScope, text: String },
     Take { item: String },
     Drop { item: String },
+    Equip { slot: EquipSlot, item: String },
+    Unequip { slot: EquipSlot },
     Inventory,
     Group(GroupAction),
     Move { direction: Direction },
@@ -65,6 +68,9 @@ impl Command {
 
             "DROP" => require(rest, "DROP requires an item")
                 .map(|item| Command::Drop { item }),
+
+            "EQUIP" => parse_equip(rest),
+            "UNEQUIP" => parse_unequip(rest),
 
             "CHAT" => parse_chat(rest),
             "GROUP" => parse_group(rest),
@@ -188,4 +194,35 @@ fn parse_quest(rest: &str) -> Result<Command, Response> {
         },
     };
     Ok(Command::Quest(action))
+}
+
+fn parse_equip(rest: &str) -> Result<Command, Response> {
+    let mut p = rest.splitn(2, ' ');
+    let slot_raw = p.next().unwrap_or("").trim();
+    let item = p.next().unwrap_or("").trim();
+    if slot_raw.is_empty() || item.is_empty() {
+        return Err(Response::error(400, "EQUIP requires a slot and an item"));
+    }
+    let slot = parse_slot(slot_raw)?;
+    Ok(Command::Equip {
+        slot,
+        item: item.to_string(),
+    })
+}
+
+fn parse_unequip(rest: &str) -> Result<Command, Response> {
+    let slot_raw = rest.trim();
+    if slot_raw.is_empty() {
+        return Err(Response::error(400, "UNEQUIP requires a slot"));
+    }
+    let slot = parse_slot(slot_raw)?;
+    Ok(Command::Unequip { slot })
+}
+
+fn parse_slot(raw: &str) -> Result<EquipSlot, Response> {
+    match raw.to_uppercase().as_str() {
+        "RIGHT" => Ok(EquipSlot::Right),
+        "LEFT" => Ok(EquipSlot::Left),
+        _ => Err(Response::error(400, "Unknown slot (RIGHT/LEFT)")),
+    }
 }

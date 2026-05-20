@@ -25,7 +25,13 @@ pub async fn drop_item(query: String, addr: &str, state: Arc<RwLock<GameState>>)
     let had = state
         .players
         .get_mut(&name)
-        .map(|p| p.take_from_inventory(&item_id))
+        .map(|p| {
+            let removed = p.take_from_inventory(&item_id);
+            if removed {
+                p.clear_if_equipped(&item_id);
+            }
+            removed
+        })
         .unwrap_or(false);
     if !had {
         return Response::error(404, "ITEM_NOT_IN_INVENTORY");
