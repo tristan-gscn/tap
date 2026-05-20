@@ -7,4 +7,4 @@ mod connect_prompt;
 pub mod panels;
 
 pub use root::draw;
-pub use connect_prompt::prompt_player_name;
+pub use connect_prompt::prompt_player_info;

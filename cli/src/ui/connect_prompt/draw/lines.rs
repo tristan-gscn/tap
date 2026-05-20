@@ -1,7 +1,11 @@
 use ratatui::text::{Line, Span};
 use ratatui::style::{Style, Modifier, Color};
 
-pub fn build_lines(visible_name: &str, show_error: bool) -> Vec<Line<'_>> {
+use super::Field;
+
+pub fn build_lines<'a>(name: &'a str, class: &'a str, show_error: bool, active: Field) -> Vec<Line<'a>> {
+    let name_label = if active == Field::Name { "> Name: " } else { "  Name: " };
+    let class_label = if active == Field::Class { "> Class: " } else { "  Class: " };
     let mut lines = vec![
         Line::from(Span::styled(
             "Enter your player name",
@@ -9,8 +13,12 @@ pub fn build_lines(visible_name: &str, show_error: bool) -> Vec<Line<'_>> {
         )),
         Line::from("") ,
         Line::from(vec![
-            Span::styled("Name: ", Style::default().fg(Color::Gray)),
-            Span::raw(visible_name),
+            Span::styled(name_label, Style::default().fg(Color::Gray)),
+            Span::raw(name),
+        ]),
+        Line::from(vec![
+            Span::styled(class_label, Style::default().fg(Color::Gray)),
+            Span::raw(class),
         ]),
         Line::from("")];
 
@@ -23,7 +31,7 @@ pub fn build_lines(visible_name: &str, show_error: bool) -> Vec<Line<'_>> {
     }
 
     lines.push(Line::from(Span::styled(
-        "Press Enter to connect, or Esc to use the default name",
+        "Tab to switch fields. Enter to connect. Esc to cancel.",
         Style::default().fg(Color::DarkGray),
     )));
 

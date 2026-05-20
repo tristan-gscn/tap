@@ -19,7 +19,7 @@ pub async fn attack(query: String, addr: &str, state: Arc<RwLock<GameState>>) ->
         None => return Response::error(403, "Connect first"),
     };
     let room = state.players[&name].room.clone();
-    let power = state.players[&name].attack;
+    let power = state.players[&name].effective_attack();
 
     let npc_type = match resolve_npc(&query) {
         Some(t) => t,
@@ -38,7 +38,8 @@ pub async fn attack(query: String, addr: &str, state: Arc<RwLock<GameState>>) ->
             let mut player_hp = 0;
             let mut defeated = false;
             if let Some(p) = state.players.get_mut(&name) {
-                p.hp -= npc_attack.max(0);
+                let reduced = (npc_attack - p.shield_reduction()).max(0);
+                p.hp -= reduced;
                 player_hp = p.hp;
                 if p.hp <= 0 {
                     p.respawn();

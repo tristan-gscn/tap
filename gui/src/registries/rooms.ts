@@ -1,8 +1,12 @@
 import type { Component } from 'svelte';
+import type { Direction } from '../utils/TAPManager';
 import Dungeon from '../room/dungeon.svelte';
 
 export type RoomRenderProps = {
-    roomId: string;
+    roomId?: string;
+    onDoorClick?: (direction: Direction) => void;
+    onFloorClick?: (position: [number, number, number]) => void;
+    availableExits?: Direction[];
 };
 
 const ROOMS: Record<string, Component<RoomRenderProps>> = {

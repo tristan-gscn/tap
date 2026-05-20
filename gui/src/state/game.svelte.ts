@@ -62,6 +62,7 @@ export type Dialogue = {
 };
 
 export type ItemDetail = { id: string; name: string };
+export type EquippedSlots = { right: string | null; left: string | null };
 
 export const PLAYER_SPAWN: [number, number, number] = [19, 0, 14];
 const ROOM_LAST_X = 38;
@@ -109,11 +110,18 @@ class GameStore {
     status = $state('healthy');
     inventory = $state<string[]>([]);
     inventoryDetail = $state<ItemDetail[]>([]);
+    equippedRight = $state<string | null>(null);
+    equippedLeft = $state<string | null>(null);
 
     playerPos = $state<[number, number, number]>([...PLAYER_SPAWN]);
     playerTarget = $state<[number, number, number]>([...PLAYER_SPAWN]);
     playerAnimation = $state<ActorAnimation>(ActorAnimation.Idle_A);
     attacking = $state(false);
+    attackTarget = $state<{
+        id: number;
+        type: string;
+        pos: [number, number, number];
+    } | null>(null);
 
     questsAll = $state<QuestEntry[]>([]);
     questsActive = $state<ActiveQuest[]>([]);
@@ -242,6 +250,20 @@ class GameStore {
                 this.pushEvent(`Quest update: ${data.id ?? ''}`);
                 break;
             }
+            case 'item_taken':
+            case 'item_dropped': {
+                void this.refreshLook();
+                void this.refreshInventory();
+                break;
+            }
+            case 'quest_accepted': {
+                void this.refreshQuestList();
+                void this.refreshQuestStatus();
+                if (data.quest) {
+                    this.pushEvent(`Quest accepted: ${data.quest}`);
+                }
+                break;
+            }
         }
     }
 
@@ -275,13 +297,31 @@ class GameStore {
     async refreshInventory() {
         const resp = await this.tap.inventory();
         if (resp.status !== 'ok') return;
-        const data = ok<{ items: string[]; items_detail?: ItemDetail[] }>(resp, { items: [] });
+        const data = ok<{ items: string[]; items_detail?: ItemDetail[]; equipped?: EquippedSlots }>(resp, { items: [] });
         this.inventory = data.items ?? [];
         this.inventoryDetail = data.items_detail ?? (data.items ?? []).map((id) => ({ id, name: id }));
+        this.equippedRight = data.equipped?.right ?? null;
+        this.equippedLeft = data.equipped?.left ?? null;
     }
 
     setMoveTarget(pos: [number, number, number]) {
         this.playerTarget = pos;
+    }
+
+    requestAttack(id: number, target: string, pos: [number, number, number]) {
+        this.attackTarget = { id, type: target, pos };
+        const [px, py, pz] = this.playerPos;
+        const [tx, , tz] = pos;
+        const dx = tx - px;
+        const dz = tz - pz;
+        const dist = Math.hypot(dx, dz);
+        if (dist > 0.01) {
+            const stopDistance = 1.4;
+            const travel = Math.max(0, dist - stopDistance);
+            const nx = px + (dx / dist) * travel;
+            const nz = pz + (dz / dist) * travel;
+            this.setMoveTarget([nx, py, nz]);
+        }
     }
 
     teleportPlayer(pos: [number, number, number]) {
@@ -321,6 +361,12 @@ class GameStore {
         const data = ok<{ quests: ActiveQuest[]; xp: number }>(resp, { quests: [], xp: 0 });
         this.questsActive = data.quests ?? [];
         this.xp = data.xp ?? this.xp;
+
+        const completable = (data.quests ?? []).filter((q) => q.progress >= q.required && !q.completed);
+        if (completable.length > 0) {
+            await Promise.all(completable.map((q) => this.tap.questComplete(q.id)));
+            await Promise.all([this.refreshQuestList(), this.refreshQuestStatus(), this.refreshStatus()]);
+        }
     }
 
     async refreshWho() {
@@ -387,8 +433,44 @@ class GameStore {
         this.dialogue = data;
     }
 
+    async talkAndQuest(target: string) {
+        await this.talk(target);
+        const resp = await this.tap.quest(target);
+        if (resp.status !== 'ok') {
+            return;
+        }
+        const data = (resp as TapOk).data as { quest_id?: string; name?: string };
+        if (data?.quest_id) {
+            const accept = await this.tap.questAccept(data.quest_id);
+            if (accept.status !== 'ok') {
+                this.pushEvent(`Quest accept failed: ${accept.message}`);
+                return;
+            }
+            this.pushEvent(`Quest accepted: ${data.name ?? data.quest_id}`);
+            await Promise.all([this.refreshQuestList(), this.refreshQuestStatus()]);
+        }
+    }
+
     closeDialogue() {
         this.dialogue = null;
+    }
+
+    async equip(slot: 'right' | 'left', item: string) {
+        const resp = await this.tap.equip(slot, item);
+        if (resp.status !== 'ok') {
+            this.pushEvent(`Equip failed: ${resp.message}`);
+            return;
+        }
+        await this.refreshInventory();
+    }
+
+    async unequip(slot: 'right' | 'left') {
+        const resp = await this.tap.unequip(slot);
+        if (resp.status !== 'ok') {
+            this.pushEvent(`Unequip failed: ${resp.message}`);
+            return;
+        }
+        await this.refreshInventory();
     }
 
     async acceptQuest(id: string) {

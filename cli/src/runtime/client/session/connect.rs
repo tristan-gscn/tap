@@ -24,13 +24,13 @@ fn next_response(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<ApiRes
 /// Establishes the initial connection with the TAP server and initializes the session.
 /// Prompts for the player name, sends the CONNECT command, and retrieves initial state.
 pub fn connect() -> io::Result<Session> {
-    let player_name = ui::prompt_player_name()?;
+    let info = ui::prompt_player_info()?;
     let mut stream = TcpStream::connect(SERVER_ADDR)?;
     let mut reader = stream.try_clone()?;
     reader.set_nonblocking(true)?;
     let mut read_buf = Vec::new();
 
-    send_line(&mut stream, &format!("CONNECT {}", player_name))?;
+    send_line(&mut stream, &format!("CONNECT {} {}", info.name, info.class))?;
     let connect_response = next_response(&mut reader, &mut read_buf)?;
     super::super::protocol::ensure_ok(&connect_response, "connect")?;
 
@@ -47,11 +47,11 @@ pub fn connect() -> io::Result<Session> {
     let quest_summary = next_response(&mut reader, &mut read_buf)?;
 
     let logs = vec![
-        format!("[System] Connected to {} as {}", SERVER_ADDR, player_name),
+        format!("[System] Connected to {} as {} ({})", SERVER_ADDR, info.name, info.class),
         format!("[System] Room loaded: {} ({})", look.room.name, look.room.id),
     ];
 
-    let mut app = App::new(player_name, look_to_room(look), logs);
+    let mut app = App::new(info.name, look_to_room(look), logs);
     app.status.inventory = inventory.items;
     if let ApiResponse::Ok { data, .. } = who {
         if let Some(list) = data.get("players").and_then(|v| v.as_array()) {

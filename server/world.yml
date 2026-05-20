@@ -11,6 +11,9 @@ world:
           count: 1
       items:
         - "torch"
+        - "sword"
+        - "shield"
+        - "dagger"
 
     hall:
       name: "Pillared Hall"
@@ -24,6 +27,8 @@ world:
           count: 2
       items:
         - "bone_dust"
+        - "axe"
+        - "bow"
 
     vault:
       name: "Forgotten Vault"
@@ -36,11 +41,54 @@ world:
           count: 1
       items:
         - "ancient_coin"
+        - "wand"
+        - "staff"
+        - "crossbow"
 
   items:
     torch:
       name: "Burning Torch"
       description: "A pitch-soaked torch, still alight."
+      obtainable: true
+
+    sword:
+      name: "Iron Sword"
+      description: "A simple blade, but it bites."
+      obtainable: true
+
+    shield:
+      name: "Wooden Shield"
+      description: "A battered shield, still sturdy."
+      obtainable: true
+
+    dagger:
+      name: "Rusted Dagger"
+      description: "A short blade with a wicked point."
+      obtainable: true
+
+    axe:
+      name: "Chipped Axe"
+      description: "A heavy axe, dulled by time."
+      obtainable: true
+
+    bow:
+      name: "Hunter's Bow"
+      description: "A bent bow with a frayed string."
+      obtainable: true
+
+    crossbow:
+      name: "Old Crossbow"
+      description: "A compact crossbow with worn limbs."
+      obtainable: true
+
+    wand:
+      name: "Ashen Wand"
+      description: "A thin wand, warm to the touch."
+      obtainable: true
+
+    staff:
+      name: "Ember Staff"
+      description: "A tall staff capped with a faintly glowing crystal."
       obtainable: true
 
     bone_dust:

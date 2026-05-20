@@ -23,6 +23,8 @@ pub async fn dispatch(
         Command::Chat { scope, text } => chat::chat(scope, text, addr, state).await,
         Command::Take { item } => inventory::take(item, addr, state).await,
         Command::Drop { item } => inventory::drop_item(item, addr, state).await,
+        Command::Equip { slot, item } => inventory::equip(slot, item, addr, state).await,
+        Command::Unequip { slot } => inventory::unequip(slot, addr, state).await,
         Command::Inventory => inventory::inventory(addr, state).await,
         Command::Group(action) => group::group(action, addr, state).await,
         Command::Move { direction } => world::move_player(direction, addr, state).await,

@@ -21,6 +21,8 @@ pub struct Player {
     pub room: String,
     pub tx: UnboundedSender<Response>,
     pub inventory: Vec<String>,
+    pub equipped_right: Option<String>,
+    pub equipped_left: Option<String>,
     pub group: Option<GroupId>,
     pub hp: i32,
     pub max_hp: i32,
@@ -44,6 +46,8 @@ impl Player {
             room: "start".to_string(),
             tx,
             inventory: Vec::new(),
+            equipped_right: None,
+            equipped_left: None,
             group: None,
             hp: DEFAULT_HP,
             max_hp: DEFAULT_HP,
@@ -63,7 +67,61 @@ impl Player {
         }
     }
 
+<<<<<<< HEAD
+    pub fn equip(&mut self, slot: EquipSlot, item_id: String) {
+        match slot {
+            EquipSlot::Right => self.equipped_right = Some(item_id),
+            EquipSlot::Left => self.equipped_left = Some(item_id),
+        }
+    }
+
+    pub fn unequip(&mut self, slot: EquipSlot) {
+        match slot {
+            EquipSlot::Right => self.equipped_right = None,
+            EquipSlot::Left => self.equipped_left = None,
+        }
+    }
+
+    pub fn clear_if_equipped(&mut self, item_id: &str) {
+        if self.equipped_right.as_deref() == Some(item_id) {
+            self.equipped_right = None;
+        }
+        if self.equipped_left.as_deref() == Some(item_id) {
+            self.equipped_left = None;
+        }
+    }
+
+    pub fn effective_attack(&self) -> i32 {
+        self.attack + self.weapon_bonus()
+    }
+
+    pub fn shield_reduction(&self) -> i32 {
+        if self.has_shield() { 2 } else { 0 }
+    }
+
+    fn weapon_bonus(&self) -> i32 {
+        let mut bonus = 0;
+        if self.has_weapon(self.equipped_right.as_deref()) {
+            bonus += 4;
+        }
+        if self.has_weapon(self.equipped_left.as_deref()) {
+            bonus += 4;
+        }
+        bonus
+    }
+
+    fn has_weapon(&self, item_id: Option<&str>) -> bool {
+        matches!(item_id, Some(id) if is_weapon(id))
+    }
+
+    fn has_shield(&self) -> bool {
+        matches!(self.equipped_left.as_deref(), Some(id) if is_shield(id))
+            || matches!(self.equipped_right.as_deref(), Some(id) if is_shield(id))
+    }
+
+=======
     /// Restores HP and moves the player back to the starting room.
+>>>>>>> 7bfee5091c30d156334bc1ea9045cfa6f4629888
     pub fn respawn(&mut self) {
         self.hp = self.max_hp;
         self.room = "start".to_string();
@@ -88,4 +146,25 @@ impl Player {
         }
         touched
     }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum EquipSlot {
+    Right,
+    Left,
+}
+
+fn is_weapon(id: &str) -> bool {
+    let id = id.to_lowercase();
+    id.contains("sword")
+        || id.contains("axe")
+        || id.contains("dagger")
+        || id.contains("bow")
+        || id.contains("crossbow")
+        || id.contains("staff")
+        || id.contains("wand")
+}
+
+fn is_shield(id: &str) -> bool {
+    id.to_lowercase().contains("shield")
 }
