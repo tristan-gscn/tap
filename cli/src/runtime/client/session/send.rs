@@ -4,6 +4,7 @@ use super::super::protocol::{parse_look, ApiResponse, InventoryResponse, LookRes
 use super::Session;
 use crate::app::{RoomMock, RoomNpc};
 
+/// Converts a LookResponse from the server into a RoomMock for the application.
 pub fn look_to_room(look: LookResponse) -> RoomMock {
     let npcs = look
         .npcs
@@ -26,6 +27,7 @@ pub fn look_to_room(look: LookResponse) -> RoomMock {
 }
 
 impl Session {
+    /// Logs a server response to the application log.
     pub fn log_response(&mut self, resp: &ApiResponse) {
         match resp {
             ApiResponse::Ok { kind, data } => {
@@ -46,14 +48,17 @@ impl Session {
         }
     }
 
+    /// Applies a LOOK response to the current room state.
     pub fn apply_look_to_room(&mut self, look: LookResponse) {
         self.app.room = look_to_room(look);
     }
 
+    /// Applies an INVENTORY response to the player's status.
     pub fn apply_inventory_to_status(&mut self, inventory: InventoryResponse) {
         self.app.status.inventory = inventory.items;
     }
 
+    /// Sends a LOOK command to refresh the current room state.
     pub fn refresh_look(&mut self) -> io::Result<()> {
         let resp = self.send_command("LOOK")?;
         match parse_look(resp) {
@@ -67,6 +72,7 @@ impl Session {
     }
 }
 
+/// Formats JSON data into a human-readable string for logging.
 fn fmt_data(data: &serde_json::Value) -> String {
     match data {
         serde_json::Value::Object(map) => map

@@ -3,6 +3,7 @@ use ratatui::Frame;
 use crate::app::App;
 use super::{right_panel, unified_log};
 
+/// Renders the main area of the UI, including the log and the right panel.
 pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     let chunks = Layout::default().direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)]).split(area);

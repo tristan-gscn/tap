@@ -2,6 +2,8 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::app::Tab;
 use super::client::Session;
 
+/// Handles a keyboard key press.
+/// Returns true if the application should exit.
 pub fn handle(key: KeyEvent, session: &mut Session) -> bool {
     match key.code {
         KeyCode::Esc => return true,

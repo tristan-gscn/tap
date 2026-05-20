@@ -9,6 +9,7 @@ use super::reader::read_line_blocking;
 use super::send::look_to_room;
 use super::Session;
 
+/// Retrieves the next response from the server, ignoring asynchronous events.
 fn next_response(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<ApiResponse> {
     loop {
         let line = read_line_blocking(reader, buf)?;
@@ -20,6 +21,8 @@ fn next_response(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<ApiRes
     }
 }
 
+/// Establishes the initial connection with the TAP server and initializes the session.
+/// Prompts for the player name, sends the CONNECT command, and retrieves initial state.
 pub fn connect() -> io::Result<Session> {
     let player_name = ui::prompt_player_name()?;
     let mut stream = TcpStream::connect(SERVER_ADDR)?;

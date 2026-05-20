@@ -3,6 +3,7 @@ use std::net::TcpStream;
 
 pub const SERVER_ADDR: &str = "127.0.0.1:4000";
 
+/// Sends a line of text terminated by a newline on the TCP stream.
 pub fn send_line(stream: &mut TcpStream, line: &str) -> io::Result<()> {
     stream.write_all(line.as_bytes())?;
     stream.write_all(b"\n")?;

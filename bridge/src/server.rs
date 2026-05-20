@@ -3,6 +3,10 @@ use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
 use tokio_tungstenite::{accept_async, tungstenite::Message};
 
+/// Handles a WebSocket client connection.
+/// 
+/// Establishes a TCP connection to the TAP server and performs bidirectional
+/// data transfer between the WebSocket and the TCP stream.
 pub async fn handle_client(
     stream: TcpStream,
     tap_addr: String,

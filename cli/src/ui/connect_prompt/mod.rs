@@ -2,6 +2,7 @@ mod draw;
 mod cleanup;
 mod layout;
 
+/// Prompts the user to enter their player name using a temporary TUI.
 pub fn prompt_player_name() -> std::io::Result<String> {
     enable_raw_mode()?;
     let mut stdout = std::io::stdout();

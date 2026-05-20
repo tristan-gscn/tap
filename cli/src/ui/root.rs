@@ -3,6 +3,7 @@ use ratatui::Frame;
 use crate::app::App;
 use super::{input_bar, main_area};
 
+/// Renders the root UI structure of the application.
 pub fn draw(frame: &mut Frame, app: &App) {
     let root = Layout::default().direction(Direction::Vertical)
         .constraints([Constraint::Min(1), Constraint::Length(3)]).split(frame.size());

@@ -4,6 +4,7 @@ use super::super::super::protocol::{ApiResponse, InventoryResponse, LookResponse
 use super::super::Session;
 use super::{chat, combat, group, quest, room};
 
+/// Handles a response from the server and updates the session accordingly.
 pub fn handle(session: &mut Session, resp: ApiResponse) {
     match resp {
         ApiResponse::Ok { kind, data } if kind == "event" => handle_event(session, &data),
@@ -24,6 +25,7 @@ pub fn handle(session: &mut Session, resp: ApiResponse) {
     }
 }
 
+/// Handles a specific asynchronous event received from the server.
 fn handle_event(session: &mut Session, data: &Value) {
     let ev = data.get("event").and_then(|v| v.as_str()).unwrap_or("");
     if room::handle_room_event(session, ev, data) {

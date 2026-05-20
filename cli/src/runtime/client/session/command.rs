@@ -5,6 +5,8 @@ use super::reader::read_line_blocking;
 use super::Session;
 
 impl Session {
+    /// Sends a command to the server and waits for the response.
+    /// Handles asynchronous events received while waiting for the response.
     pub fn send_command(&mut self, line: &str) -> io::Result<ApiResponse> {
         super::super::transport::send_line(&mut self.stream, line)?;
         loop {

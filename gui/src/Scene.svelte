@@ -18,8 +18,8 @@
 <T.DirectionalLight position={[3, 10, 10]} intensity={1} />
 <T.AmbientLight intensity={0.5} />
 
-<WarriorSkeleton_Actor
+<KnightCharacter_Actor
     animation={ActorAnimation.Walking_A}
-    rightHandProp={SkeletonProp.Axe}
-    leftHandProp={SkeletonProp.ShieldLargeA}
+    rightHandProp={AdventurerProp.Staff}
+    leftHandProp={AdventurerProp.ShieldRound}
 />
