@@ -21,18 +21,8 @@
                     <div class="tap-bar-bg h-1.5 w-full">
                         <div class="tap-bar-fill {pct < 30 ? 'hp-low' : pct < 60 ? 'hp-mid' : ''}" style="width: {pct}%"></div>
                     </div>
-                    <div class="mt-2.5 flex gap-1.5">
-                        <button
-                            type="button"
-                            class="tap-btn px-2 py-0.5 text-[10.5px]"
-                            onclick={() => game.talk(npc.type)}
-                        >talk</button>
-                        <button
-                            type="button"
-                            class="tap-btn tap-btn-danger px-2 py-0.5 text-[10.5px]"
-                            onclick={() => game.attack(npc.type)}
-                            disabled={game.attacking}
-                        >attack</button>
+                    <div class="mt-2 text-[10.5px] text-white/60">
+                        Click in 3D to attack · Right-click to talk & accept quests
                     </div>
                 </li>
             {/each}

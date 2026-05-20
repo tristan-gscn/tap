@@ -148,6 +148,14 @@ export class TAPManager {
         return this.sendRaw(`DROP ${item}`);
     }
 
+    equip(slot: 'right' | 'left', item: string): Promise<TapResponse> {
+        return this.sendRaw(`EQUIP ${slot} ${item}`);
+    }
+
+    unequip(slot: 'right' | 'left'): Promise<TapResponse> {
+        return this.sendRaw(`UNEQUIP ${slot}`);
+    }
+
     attack(target: string): Promise<TapResponse> {
         return this.sendRaw(`ATTACK ${target}`);
     }

@@ -7,10 +7,19 @@ use self::events::handle_events; use self::lines::build_lines;
 mod events;
 mod lines;
 
-pub fn draw_prompt(stdout: Stdout) -> io::Result<String> {
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(super) enum Field {
+    Name,
+    Class,
+}
+
+pub fn draw_prompt(stdout: Stdout) -> io::Result<(String, String)> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-    let mut input = String::new(); let mut show_error = false;
+    let mut name = String::new();
+    let mut class = "knight".to_string();
+    let mut show_error = false;
+    let mut active = Field::Name;
     loop {
         terminal.draw(|frame| {
             let area = frame.size();
@@ -19,13 +28,18 @@ pub fn draw_prompt(stdout: Stdout) -> io::Result<String> {
             ]).split(area);
             let prompt_area = centered_rect(62, 9, vertical[1]);
             let block = Block::default().title("Connect to Server").borders(Borders::ALL).border_style(Style::default().fg(Color::Cyan));
-            let visible_name = input.as_str();
-            let lines = build_lines(visible_name, show_error);
+            let lines = build_lines(&name, &class, show_error, active);
             let paragraph = Paragraph::new(lines).block(block).style(Style::default().fg(Color::White));
             frame.render_widget(paragraph, prompt_area);
-            let cursor_x = prompt_area.x + 7 + input.len() as u16; let cursor_y = prompt_area.y + 3; frame.set_cursor(cursor_x, cursor_y);
+            let (cursor_x, cursor_y) = match active {
+                Field::Name => (prompt_area.x + 8 + name.len() as u16, prompt_area.y + 3),
+                Field::Class => (prompt_area.x + 9 + class.len() as u16, prompt_area.y + 5),
+            };
+            frame.set_cursor(cursor_x, cursor_y);
         })?;
-        if handle_events(&mut input, &mut show_error)? { break; }
+        if handle_events(&mut name, &mut class, &mut show_error, &mut active)? { break; }
     }
-    Ok(input.trim().to_string())
+    let name = name.trim().to_string();
+    let class = if class.trim().is_empty() { "knight".to_string() } else { class.trim().to_string() };
+    Ok((name, class))
 }

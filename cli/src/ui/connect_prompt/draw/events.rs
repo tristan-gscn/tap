@@ -3,7 +3,14 @@ use std::time::Duration;
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 
-pub fn handle_events(input: &mut String, show_error: &mut bool) -> io::Result<bool> {
+use super::Field;
+
+pub fn handle_events(
+    name: &mut String,
+    class: &mut String,
+    show_error: &mut bool,
+    active: &mut Field,
+) -> io::Result<bool> {
     if event::poll(Duration::from_millis(200))? {
         if let Event::Key(key) = event::read()? {
             if key.kind != KeyEventKind::Press {
@@ -12,7 +19,7 @@ pub fn handle_events(input: &mut String, show_error: &mut bool) -> io::Result<bo
 
             match key.code {
                 KeyCode::Enter => {
-                    if input.trim().is_empty() {
+                    if name.trim().is_empty() {
                         *show_error = true;
                         return Ok(false);
                     } else {
@@ -20,15 +27,28 @@ pub fn handle_events(input: &mut String, show_error: &mut bool) -> io::Result<bo
                     }
                 }
                 KeyCode::Esc => {
-                    input.clear();
+                    name.clear();
                     return Ok(true);
                 }
+                KeyCode::Tab => {
+                    *active = if *active == Field::Name { Field::Class } else { Field::Name };
+                }
                 KeyCode::Backspace => {
-                    input.pop();
+                    match active {
+                        Field::Name => {
+                            name.pop();
+                        }
+                        Field::Class => {
+                            class.pop();
+                        }
+                    }
                     *show_error = false;
                 }
                 KeyCode::Char(c) if !c.is_control() => {
-                    input.push(c);
+                    match active {
+                        Field::Name => name.push(c),
+                        Field::Class => class.push(c),
+                    }
                     *show_error = false;
                 }
                 _ => {}

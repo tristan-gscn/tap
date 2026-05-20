@@ -2,8 +2,13 @@ mod draw;
 mod cleanup;
 mod layout;
 
-/// Prompts the user to enter their player name using a temporary TUI.
-pub fn prompt_player_name() -> std::io::Result<String> {
+pub struct ConnectInfo {
+    pub name: String,
+    pub class: String,
+}
+
+/// Prompts the user to enter their player name and class using a temporary TUI.
+pub fn prompt_player_info() -> std::io::Result<ConnectInfo> {
     enable_raw_mode()?;
     let mut stdout = std::io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
@@ -12,7 +17,7 @@ pub fn prompt_player_name() -> std::io::Result<String> {
     let cleanup_result = cleanup::cleanup_terminal();
 
     match (result, cleanup_result) {
-        (Ok(name), Ok(())) => Ok(name),
+        (Ok((name, class)), Ok(())) => Ok(ConnectInfo { name, class }),
         (Err(err), _) => Err(err),
         (Ok(_), Err(err)) => Err(err),
     }

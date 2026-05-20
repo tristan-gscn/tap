@@ -196,7 +196,6 @@
               {/each}
             {/each}
 
-            <!-- Invisible clickable floor plane for click-to-move -->
             <T.Mesh
               position={[lastX / 2, 0.05, lastZ / 2]}
               rotation={[-Math.PI / 2, 0, 0]}

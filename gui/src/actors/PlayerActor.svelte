@@ -3,8 +3,11 @@
     import { ActorAnimation } from './ActorAnimation';
     import { resolveCharacterModel } from '../registries/characterModels';
     import { game } from '../state/game.svelte';
+    import { resolveItemProp } from '../registries/itemProps';
 
     const CharComp = $derived(resolveCharacterModel(game.playerClass));
+    const rightHandProp = $derived(resolveItemProp(game.equippedRight));
+    const leftHandProp = $derived(resolveItemProp(game.equippedLeft));
 
     let rotationY = $state(Math.PI);
 
@@ -29,9 +32,25 @@
         } else if (!game.attacking && game.playerAnimation !== ActorAnimation.Idle_A) {
             game.playerAnimation = ActorAnimation.Idle_A;
         }
+
+        const target = game.attackTarget;
+        if (target && !game.attacking) {
+            const [ax, , az] = target.pos;
+            const adx = ax - px;
+            const adz = az - pz;
+            const attackDist = Math.hypot(adx, adz);
+            if (attackDist <= 1.6) {
+                game.attackTarget = null;
+                void game.attack(target.type);
+            }
+        }
     });
 </script>
 
 <T.Group position={game.playerPos} rotation={[0, rotationY, 0]}>
-    <CharComp animation={game.playerAnimation} />
+    <CharComp
+        animation={game.playerAnimation}
+        rightHandProp={rightHandProp ?? undefined}
+        leftHandProp={leftHandProp ?? undefined}
+    />
 </T.Group>

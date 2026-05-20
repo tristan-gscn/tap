@@ -47,22 +47,9 @@
                             {active.progress}/{active.required}
                         </div>
                     {/if}
-                    {#if q.status === 'available' || (active && active.progress >= active.required && !active.completed)}
-                        <div class="mt-2 flex gap-1.5">
-                            {#if q.status === 'available'}
-                                <button
-                                    type="button"
-                                    class="tap-btn tap-btn-primary px-2 py-0.5 text-[10.5px]"
-                                    onclick={() => game.acceptQuest(q.id)}>accept</button
-                                >
-                            {/if}
-                            {#if active && active.progress >= active.required && !active.completed}
-                                <button
-                                    type="button"
-                                    class="tap-btn tap-btn-accept px-2 py-0.5 text-[10.5px]"
-                                    onclick={() => game.completeQuest(q.id)}>complete</button
-                                >
-                            {/if}
+                    {#if q.status === 'available'}
+                        <div class="mt-2 text-[10.5px] text-white/55">
+                            Talk to the NPC in 3D to accept.
                         </div>
                     {/if}
                 </li>
