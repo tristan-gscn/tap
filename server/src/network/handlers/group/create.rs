@@ -4,6 +4,7 @@ use tracing::info;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the GROUP CREATE subcommand, creating a new group with the player as leader.
 pub fn create(state: &mut GameState, name: &str) -> Response {
     if state.players[name].group.is_some() {
         return Response::error(402, "ALREADY_IN_GROUP");

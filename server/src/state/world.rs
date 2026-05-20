@@ -28,6 +28,7 @@ pub struct WorldState {
 }
 
 impl WorldState {
+    /// Builds a world state from the loaded configuration.
     pub fn from_config() -> Self {
         let cfg = config::get();
         let mut room_items = HashMap::new();
@@ -65,10 +66,12 @@ impl WorldState {
         }
     }
 
+    /// Returns a slice of item IDs present in the specified room.
     pub fn items_in(&self, room: &str) -> &[String] {
         self.room_items.get(room).map(|v| v.as_slice()).unwrap_or(&[])
     }
 
+    /// Removes an item from a room by ID and returns whether it was removed.
     pub fn remove_item(&mut self, room: &str, item_id: &str) -> bool {
         if let Some(items) = self.room_items.get_mut(room) {
             if let Some(idx) = items.iter().position(|i| i == item_id) {
@@ -79,10 +82,12 @@ impl WorldState {
         false
     }
 
+    /// Adds an item ID to the specified room.
     pub fn add_item(&mut self, room: &str, item_id: String) {
         self.room_items.entry(room.to_string()).or_default().push(item_id);
     }
 
+    /// Returns a slice of NPC instances present in the specified room.
     pub fn npcs_in(&self, room: &str) -> &[NpcInstance] {
         self.room_npcs
             .get(room)
@@ -90,6 +95,7 @@ impl WorldState {
             .unwrap_or(&[])
     }
 
+    /// Applies damage to the first NPC of a given type in the room.
     pub fn attack_npc(&mut self, room: &str, npc_type: &str, damage: i32) -> AttackOutcome {
         let npcs = match self.room_npcs.get_mut(room) {
             Some(n) => n,

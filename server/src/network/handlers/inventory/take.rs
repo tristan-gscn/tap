@@ -10,6 +10,7 @@ use crate::network::handlers::resolve_item;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the TAKE command, allowing a player to pick up an item from the room.
 pub async fn take(query: String, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let mut state = state.write().await;
 

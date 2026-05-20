@@ -9,6 +9,7 @@ use crate::network::handlers::resolve_npc;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the TALK command, allowing a player to interact with an NPC.
 pub async fn talk(query: String, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let state = state.read().await;
 

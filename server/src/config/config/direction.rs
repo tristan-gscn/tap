@@ -10,6 +10,7 @@ pub enum Direction {
 }
 
 impl Direction {
+    /// Returns the string representation of the direction.
     pub fn as_str(&self) -> &'static str {
         match self {
             Direction::North => "north",
@@ -19,6 +20,8 @@ impl Direction {
         }
     }
 
+    /// Parses a string input into a `Direction`.
+    /// Supports full names (e.g., "north") and abbreviations (e.g., "n").
     pub fn from_input(s: &str) -> Option<Direction> {
         match s.trim().to_lowercase().as_str() {
             "north" | "n" => Some(Direction::North),

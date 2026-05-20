@@ -4,6 +4,7 @@ use crate::config;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the QUEST SUMMARY subcommand, returning a brief overview of all quests.
 pub fn summary(state: &GameState, name: &str) -> Response {
     let cfg = config::get();
     let player = &state.players[name];

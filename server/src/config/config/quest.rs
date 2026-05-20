@@ -18,18 +18,21 @@ pub enum Objective {
 }
 
 impl Objective {
+    /// Returns the target identifier for this objective.
     pub fn target(&self) -> &str {
         match self {
             Objective::Collect { target, .. } | Objective::Kill { target, .. } => target,
         }
     }
 
+    /// Returns the required count for this objective.
     pub fn count(&self) -> u32 {
         match self {
             Objective::Collect { count, .. } | Objective::Kill { count, .. } => *count,
         }
     }
 
+    /// Returns the objective kind as a static string.
     pub fn kind(&self) -> &'static str {
         match self {
             Objective::Collect { .. } => "collect",

@@ -8,6 +8,7 @@ use crate::network::handlers::resolve_item;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the DROP command, allowing a player to drop an item from their inventory into the room.
 pub async fn drop_item(query: String, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let mut state = state.write().await;
 

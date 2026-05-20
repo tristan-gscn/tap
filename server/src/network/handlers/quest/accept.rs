@@ -6,6 +6,7 @@ use crate::protocol::response::Response;
 use crate::state::game::GameState;
 use crate::state::player::QuestProgress;
 
+/// Handles the QUEST ACCEPT subcommand, accepting a quest by ID.
 pub fn accept(state: &mut GameState, name: &str, id: String) -> Response {
     let qid = match resolve_quest(&id) {
         Some(q) => q,

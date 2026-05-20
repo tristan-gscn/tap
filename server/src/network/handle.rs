@@ -8,6 +8,8 @@ use crate::protocol::response::Response;
 use crate::state::game::GameState;
 use tracing::{debug, info};
 
+/// Handles a single client connection.
+/// Manages the full lifecycle of a session: reading commands, dispatching them, and writing responses.
 pub async fn handle(socket: TcpStream, addr: String, state: Arc<RwLock<GameState>>) {
     let (reader, mut writer) = socket.into_split();
     let mut lines = BufReader::new(reader).lines();

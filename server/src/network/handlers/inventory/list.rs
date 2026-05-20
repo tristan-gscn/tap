@@ -6,6 +6,7 @@ use tokio::sync::RwLock;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the INVENTORY command, returning a list of items the player is carrying.
 pub async fn inventory(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let state = state.read().await;
 

@@ -4,6 +4,7 @@ use crate::config;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the QUEST STATUS subcommand, returning progress on all active quests.
 pub fn status(state: &GameState, name: &str) -> Response {
     let cfg = config::get();
     let player = &state.players[name];

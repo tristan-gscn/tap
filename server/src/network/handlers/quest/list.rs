@@ -4,6 +4,7 @@ use crate::config;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the QUEST LIST subcommand, returning all available and active quests.
 pub fn list(state: &GameState, name: &str) -> Response {
     let cfg = config::get();
     let player = &state.players[name];

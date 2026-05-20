@@ -7,6 +7,8 @@ use tracing::info;
 use crate::protocol::response::Response;
 use crate::state::game::{GameState, GroupLeave};
 
+/// Handles a player's disconnection.
+/// Cleans up the player's state, handles group removal/disbanding, and notifies others in the room.
 pub async fn disconnect(addr: &str, state: Arc<RwLock<GameState>>) {
     let mut state = state.write().await;
 

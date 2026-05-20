@@ -1,5 +1,6 @@
 use crate::config;
 
+/// Resolves an item query by ID or name, returning the canonical item ID if found.
 pub fn resolve_item(query: &str) -> Option<String> {
     let q = query.trim();
     config::get().world.items.iter().find_map(|(id, item)| {
@@ -11,6 +12,7 @@ pub fn resolve_item(query: &str) -> Option<String> {
     })
 }
 
+/// Resolves an NPC query by ID or name, returning the canonical NPC ID if found.
 pub fn resolve_npc(query: &str) -> Option<String> {
     let q = query.trim();
     config::get().world.npcs.iter().find_map(|(id, npc)| {

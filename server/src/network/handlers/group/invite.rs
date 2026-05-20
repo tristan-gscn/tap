@@ -4,6 +4,7 @@ use tracing::info;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the GROUP INVITE subcommand, inviting a player to the player's group.
 pub fn invite(state: &mut GameState, name: &str, target: String) -> Response {
     let gid = match state.players[name].group {
         Some(gid) => gid,

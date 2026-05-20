@@ -29,6 +29,7 @@ pub struct Player {
 }
 
 impl Player {
+    /// Creates a new player with default stats in the starting room.
     pub fn new(name: String, addr: String, tx: UnboundedSender<Response>) -> Self {
         Player {
             name,
@@ -45,6 +46,7 @@ impl Player {
         }
     }
 
+    /// Removes an item from the player's inventory by ID.
     pub fn take_from_inventory(&mut self, item_id: &str) -> bool {
         if let Some(idx) = self.inventory.iter().position(|i| i == item_id) {
             self.inventory.remove(idx);
@@ -54,11 +56,13 @@ impl Player {
         }
     }
 
+    /// Restores HP and moves the player back to the starting room.
     pub fn respawn(&mut self) {
         self.hp = self.max_hp;
         self.room = "start".to_string();
     }
 
+    /// Updates quest progress for matching objectives and returns touched quest IDs.
     pub fn advance_quests(&mut self, kind: &str, target: &str, amount: u32) -> Vec<String> {
         let cfg = crate::config::get();
         let mut touched = Vec::new();

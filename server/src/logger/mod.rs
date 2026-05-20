@@ -6,6 +6,8 @@ use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use files::DailyJsonFiles;
 use time::{ClockTime, IsoTime};
 
+/// Initializes the global tracing subscriber with console and daily JSON file layers.
+/// Loads environment variables from .env if present.
 pub fn init() {
     dotenvy::dotenv().ok();
 

@@ -17,14 +17,17 @@ pub enum Response {
 }
 
 impl Response {
+    /// Creates a successful response with a specific kind and data.
     pub fn ok(kind: &'static str, data: Value) -> Self {
         Response::Ok { kind, data }
     }
 
+    /// Creates an error response with a status code and message.
     pub fn error(code: u16, message: impl Into<String>) -> Self {
         Response::Error { code, message: message.into() }
     }
 
+    /// Serializes the response to a JSON string followed by a newline.
     pub fn to_line(&self) -> String {
         let body = serde_json::to_string(self).unwrap_or_else(|_| {
             r#"{"status":"error","code":500,"message":"serialization failure"}"#.to_string()

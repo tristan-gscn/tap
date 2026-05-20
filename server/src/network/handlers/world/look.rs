@@ -7,6 +7,7 @@ use crate::config;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the LOOK command, returning information about the current room.
 pub async fn look(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let state = state.read().await;
 
