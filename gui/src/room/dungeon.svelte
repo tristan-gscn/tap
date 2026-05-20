@@ -250,8 +250,15 @@
                   e.stopPropagation();
                   onDoorClick(dm.direction);
                 }}
-                onpointerenter={() => enabled && (hoveredDoor = dm.direction)}
-                onpointerleave={() => hoveredDoor === dm.direction && (hoveredDoor = null)}
+                onpointerenter={() => {
+                  if (!enabled) return;
+                  hoveredDoor = dm.direction;
+                  document.body.style.cursor = "pointer";
+                }}
+                onpointerleave={() => {
+                  if (hoveredDoor === dm.direction) hoveredDoor = null;
+                  document.body.style.cursor = "default";
+                }}
               >
                 <T is={doorModel.scene.clone()} />
               </T.Group>

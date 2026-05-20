@@ -67,7 +67,6 @@ impl Player {
         }
     }
 
-<<<<<<< HEAD
     pub fn equip(&mut self, slot: EquipSlot, item_id: String) {
         match slot {
             EquipSlot::Right => self.equipped_right = Some(item_id),
@@ -119,9 +118,7 @@ impl Player {
             || matches!(self.equipped_right.as_deref(), Some(id) if is_shield(id))
     }
 
-=======
     /// Restores HP and moves the player back to the starting room.
->>>>>>> 7bfee5091c30d156334bc1ea9045cfa6f4629888
     pub fn respawn(&mut self) {
         self.hp = self.max_hp;
         self.room = "start".to_string();

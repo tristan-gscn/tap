@@ -33,3 +33,11 @@ export function otherPlayerPosition(name: string, roomId: string): [number, numb
     const z = Z_PLAYER_MIN + ((h >>> 10) % 1000) / 1000 * (Z_PLAYER_MAX - Z_PLAYER_MIN);
     return [clamp(x, X_MIN, X_MAX), 0, z];
 }
+
+export function itemPosition(itemId: string, index: number, total: number): [number, number, number] {
+    const span = X_MAX - X_MIN;
+    const slot = total <= 1 ? 0.5 : index / (total - 1);
+    const x = X_MIN + slot * span;
+    const z = Z_PLAYER_MIN - 3 + ((hashString(itemId) >>> 8) % 1000) / 1000 * 4;
+    return [clamp(x, X_MIN, X_MAX), 0, clamp(z, Z_PLAYER_MIN - 3, Z_PLAYER_MIN + 1)];
+}
