@@ -4,6 +4,7 @@ use super::mocks::QuestEntry;
 use super::App;
 
 impl App {
+    /// Extracts progress (current/required) from a string.
     fn parse_progress(progress: &str) -> (i64, i64) {
         let mut parts = progress.split('/');
         let current = parts.next().and_then(|v| v.parse().ok()).unwrap_or(0);
@@ -11,6 +12,7 @@ impl App {
         (current, required)
     }
 
+    /// Updates or inserts a quest into the player's quest list.
     pub fn quest_upsert(&mut self, id: &str, f: impl FnOnce(&mut QuestEntry)) {
         if let Some(q) = self.status.quests.iter_mut().find(|q| q.id == id) {
             f(q);
@@ -27,6 +29,7 @@ impl App {
         self.status.quests.push(q);
     }
 
+    /// Applies a quest list from the server.
     pub fn apply_quest_list(&mut self, data: &Value) {
         let Some(list) = data.get("quests").and_then(|v| v.as_array()) else {
             return;
@@ -60,6 +63,7 @@ impl App {
         }
     }
 
+    /// Updates quest status from JSON data.
     pub fn apply_quest_status(&mut self, data: &Value) {
         if let Some(xp) = data.get("xp").and_then(|v| v.as_i64()) {
             self.status.xp = xp;
@@ -88,6 +92,7 @@ impl App {
         }
     }
 
+    /// Applies a quest summary (progress, status) to the application state.
     pub fn apply_quest_summary(&mut self, data: &Value) {
         let Some(list) = data.get("quests").and_then(|v| v.as_array()) else {
             return;
@@ -123,6 +128,7 @@ impl App {
         }
     }
 
+    /// Handles a quest request (e.g., new quest accepted).
     pub fn apply_quest_request(&mut self, data: &Value) {
         let Some(id) = data
             .get("quest_id")

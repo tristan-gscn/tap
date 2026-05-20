@@ -13,6 +13,7 @@ pub struct SocialMock {
 }
 
 impl SocialMock {
+    /// Creates an empty sample SocialMock.
     pub fn sample() -> Self {
         Self {
             online_players: Vec::new(),

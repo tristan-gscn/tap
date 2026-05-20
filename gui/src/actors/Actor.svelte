@@ -94,7 +94,6 @@
         return found.skeleton.bones.find((bone) => bone.name == "handl")
     })
 
-    $inspect($actions)
     $effect(() => {
         if (animation && $actions[animation]) {
             $actions[animation].play()

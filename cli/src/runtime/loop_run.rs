@@ -8,6 +8,7 @@ use crate::ui;
 use super::keys;
 use super::client::Session;
 
+/// Runs the main application loop (rendering, network polling, keyboard input).
 pub fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, session: &mut Session) -> io::Result<()> {
     let tick_rate = Duration::from_millis(250);
     let mut last_tick = Instant::now();

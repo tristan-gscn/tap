@@ -3,6 +3,7 @@ use std::net::TcpStream;
 use std::thread::sleep;
 use std::time::Duration;
 
+/// Reads all available lines from the stream without blocking.
 pub fn read_lines(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<Vec<String>> {
     let mut tmp = [0u8; 1024];
     loop {
@@ -25,6 +26,7 @@ pub fn read_lines(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<Vec<S
     Ok(lines)
 }
 
+/// Reads a line from the stream in a blocking manner.
 pub fn read_line_blocking(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Result<String> {
     let mut tmp = [0u8; 1024];
     loop {

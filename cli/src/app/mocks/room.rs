@@ -8,6 +8,7 @@ pub struct RoomNpc {
 }
 
 impl RoomNpc {
+    /// Returns a human-readable label for the NPC, including HP.
     pub fn label(&self) -> String {
         format!("{} #{}  {}/{} hp", self.kind, self.id, self.hp, self.max_hp)
     }
@@ -23,6 +24,7 @@ pub struct RoomMock {
 }
 
 impl RoomMock {
+    /// Creates a RoomMock from server response data.
     pub fn from_server(
         name: String,
         description: String,

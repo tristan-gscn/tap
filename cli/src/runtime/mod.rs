@@ -8,6 +8,8 @@ mod client;
 mod loop_run;
 mod keys;
 
+/// Starts the CLI runtime.
+/// Establishes the connection, initializes the terminal, and runs the main loop.
 pub fn start() -> io::Result<()> {
     let session = client::connect()?;
 

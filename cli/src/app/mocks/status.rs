@@ -7,6 +7,7 @@ pub struct QuestEntry {
 }
 
 impl QuestEntry {
+    /// Returns a human-readable label for the quest, including progress if applicable.
     pub fn label(&self) -> String {
         if self.required > 0 {
             format!(
@@ -30,6 +31,7 @@ pub struct PlayerStatusMock {
 }
 
 impl PlayerStatusMock {
+    /// Creates a sample PlayerStatusMock for a given player name.
     pub fn sample(name: String) -> Self {
         Self {
             name,

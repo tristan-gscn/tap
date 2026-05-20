@@ -4,6 +4,10 @@ use tokio::net::TcpListener;
 
 mod server;
 
+/// Starts the bridge server.
+/// 
+/// Reads `TAP_BRIDGE_ADDR` and `TAP_SERVER_ADDR` environment variables
+/// to determine the listening and destination addresses.
 pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let ws_addr = env::var("TAP_BRIDGE_ADDR").unwrap_or_else(|_| "127.0.0.1:7878".to_string());
     let tap_addr = env::var("TAP_SERVER_ADDR").unwrap_or_else(|_| "127.0.0.1:4000".to_string());

@@ -4,6 +4,7 @@ use ratatui::widgets::{Block, Borders, List, ListItem};
 use ratatui::{style::{Color, Style}, Frame};
 use crate::app::App;
 
+/// Classifies a log line for styling based on its prefix.
 fn classify(line: &str) -> (Style, &str) {
     if let Some(r) = line.strip_prefix("\u{2694} ") {
         return (Style::default().fg(Color::Red), r);
@@ -32,12 +33,14 @@ fn classify(line: &str) -> (Style, &str) {
     (Style::default(), line)
 }
 
+/// Splits a string into two parts at the given character index.
 fn take_chars(s: &str, n: usize) -> (String, String) {
     let mut it = s.chars();
     let head: String = it.by_ref().take(n).collect();
     (head, it.collect())
 }
 
+/// Simple word-wrapping for strings based on a maximum width.
 fn wrap(s: &str, width: usize) -> Vec<String> {
     if width == 0 {
         return vec![s.to_string()];
@@ -77,6 +80,7 @@ fn wrap(s: &str, width: usize) -> Vec<String> {
     lines
 }
 
+/// Renders the unified log area showing system messages, chat, and events.
 pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     let width = area.width.saturating_sub(2) as usize;
     let max_lines = area.height.saturating_sub(2) as usize;

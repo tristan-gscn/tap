@@ -13,6 +13,7 @@ mod room;
 pub use handle::handle as apply_event;
 
 impl Session {
+    /// Retrieves and processes pending events from the network stream.
     pub fn poll_events(&mut self) -> io::Result<()> {
         let lines = read_lines(&mut self.reader, &mut self.read_buf)?;
         for line in lines {
