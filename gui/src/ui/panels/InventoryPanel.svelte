@@ -12,7 +12,7 @@
 
 <div class="tap-panel">
     <div class="tap-panel-title">
-        <span>Inventaire</span>
+        <span>Inventory</span>
         <span class="text-[11px] font-normal text-white/55">{game.inventoryDetail.length}/{INVENTORY_SLOTS}</span>
     </div>
 
@@ -23,12 +23,12 @@
                 type="button"
                 class="tap-slot {item ? '' : 'tap-slot-empty'}"
                 onclick={() => item && game.drop(item.id)}
-                title={item ? `${item.name} (clic = lâcher)` : 'vide'}
+                title={item ? `${item.name} (click to drop)` : 'empty'}
                 disabled={!item}
             >
                 <Icon size={26} strokeWidth={1.6} />
                 {#if item}
-                    <span class="tap-tooltip">{item.name}<br /><span class="text-white/65">clic = lâcher</span></span>
+                    <span class="tap-tooltip">{item.name}<br /><span class="text-white/65">click to drop</span></span>
                 {/if}
             </button>
         {/each}
@@ -36,7 +36,7 @@
 
     {#if game.itemsDetail.length > 0}
         <div class="mt-3 border-t border-white/10 pt-2.5">
-            <div class="mb-1.5 text-[11px] text-white/60">Au sol</div>
+            <div class="mb-1.5 text-[11px] text-white/60">On the floor</div>
             <ul class="space-y-1">
                 {#each game.itemsDetail as item (item.id)}
                     {@const Icon = resolveItemIcon(item.id)}
@@ -50,7 +50,7 @@
                             class="tap-btn tap-btn-primary px-2 py-0.5 text-[10px]"
                             onclick={() => game.take(item.id)}
                         >
-                            prendre
+                            take
                         </button>
                     </li>
                 {/each}

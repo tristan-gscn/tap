@@ -11,10 +11,10 @@
         <p class="text-[12px] leading-relaxed text-white/75">{game.room.description}</p>
         {#if game.players.length > 1}
             <div class="mt-2.5 text-[11px] text-white/50">
-                Aussi ici : <span class="text-white/85">{game.players.filter((p) => p !== game.playerName).join(', ')}</span>
+                Also here: <span class="text-white/85">{game.players.filter((p) => p !== game.playerName).join(', ')}</span>
             </div>
         {/if}
     {:else}
-        <div class="text-[12px] text-white/55">Pas de salle chargée.</div>
+        <div class="text-[12px] text-white/55">No room loaded.</div>
     {/if}
 </div>

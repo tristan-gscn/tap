@@ -4,11 +4,11 @@
 
 <div class="tap-panel">
     <div class="tap-panel-title">
-        <span>Ennemis</span>
+        <span>Enemies</span>
         <span class="text-[11px] font-normal text-white/55">{game.npcs.length}</span>
     </div>
     {#if game.npcs.length === 0}
-        <div class="text-[12px] text-white/55">La salle est calme.</div>
+        <div class="text-[12px] text-white/55">The room is quiet.</div>
     {:else}
         <ul class="space-y-2">
             {#each game.npcs as npc (npc.id)}
@@ -26,13 +26,13 @@
                             type="button"
                             class="tap-btn px-2 py-0.5 text-[10.5px]"
                             onclick={() => game.talk(npc.type)}
-                        >parler</button>
+                        >talk</button>
                         <button
                             type="button"
                             class="tap-btn tap-btn-danger px-2 py-0.5 text-[10.5px]"
                             onclick={() => game.attack(npc.type)}
                             disabled={game.attacking}
-                        >attaquer</button>
+                        >attack</button>
                     </div>
                 </li>
             {/each}

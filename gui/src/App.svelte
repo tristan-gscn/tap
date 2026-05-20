@@ -18,7 +18,7 @@
             </h1>
             {#if game.room}
                 <div class="text-[10px] uppercase tracking-[0.15em] text-white/70">
-                    salle · {game.room.id}
+                    room · {game.room.id}
                 </div>
             {/if}
         </div>

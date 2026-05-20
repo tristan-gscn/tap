@@ -34,7 +34,7 @@
                     The Answer Protocol
                 </h1>
                 <p class="mt-1 text-xs text-white/60">
-                    Choisis ton héros et ton nom pour entrer dans le donjon.
+                    Pick your hero and name to enter the dungeon.
                 </p>
             </div>
             <div class="text-right text-xs text-white/50">
@@ -90,12 +90,12 @@
         </div>
 
         <div class="mb-4">
-            <label class="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-white/55" for="player-name">Nom du héros</label>
+            <label class="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-white/55" for="player-name">Hero name</label>
             <input
                 id="player-name"
                 class="glass-input w-full"
                 type="text"
-                placeholder="ex. Astaroth"
+                placeholder="e.g. trgascoi"
                 bind:value={name}
                 disabled={submitting}
                 onkeydown={(e) => e.key === 'Enter' && submit()}
@@ -114,7 +114,7 @@
             onclick={submit}
             disabled={submitting || !name.trim()}
         >
-            {submitting ? 'Connexion…' : 'Entrer dans le donjon'}
+            {submitting ? 'Connecting…' : 'Enter the dungeon'}
         </button>
     </div>
 </div>

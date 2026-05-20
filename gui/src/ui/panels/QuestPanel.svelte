@@ -5,7 +5,7 @@
 
 <div class="tap-panel">
     <div class="tap-panel-title">
-        <span>Quêtes</span>
+        <span>Quests</span>
         <button
             type="button"
             class="tap-btn px-1.5 py-0.5"
@@ -13,14 +13,14 @@
                 game.refreshQuestList();
                 game.refreshQuestStatus();
             }}
-            aria-label="rafraîchir"
+            aria-label="refresh"
         >
             <RefreshCw size={11} />
         </button>
     </div>
 
     {#if game.questsAll.length === 0}
-        <div class="text-[12px] text-white/55">Aucune quête connue.</div>
+        <div class="text-[12px] text-white/55">No known quests.</div>
     {:else}
         <ul class="max-h-72 space-y-2 overflow-y-auto pr-1">
             {#each game.questsAll as q (q.id)}
@@ -35,7 +35,7 @@
                                   ? 'text-white/80'
                                   : 'text-white/45'}"
                         >
-                            {q.status === 'completed' ? 'terminée' : q.status === 'active' ? 'en cours' : 'dispo'}
+                            {q.status === 'completed' ? 'completed' : q.status === 'active' ? 'active' : 'available'}
                         </span>
                     </div>
                     <div class="mt-1 text-[11.5px] leading-snug text-white/70">{q.description}</div>
@@ -53,14 +53,14 @@
                                 <button
                                     type="button"
                                     class="tap-btn tap-btn-primary px-2 py-0.5 text-[10.5px]"
-                                    onclick={() => game.acceptQuest(q.id)}>accepter</button
+                                    onclick={() => game.acceptQuest(q.id)}>accept</button
                                 >
                             {/if}
                             {#if active && active.progress >= active.required && !active.completed}
                                 <button
                                     type="button"
                                     class="tap-btn tap-btn-accept px-2 py-0.5 text-[10.5px]"
-                                    onclick={() => game.completeQuest(q.id)}>terminer</button
+                                    onclick={() => game.completeQuest(q.id)}>complete</button
                                 >
                             {/if}
                         </div>

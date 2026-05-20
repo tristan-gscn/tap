@@ -5,18 +5,18 @@
 
 <div class="tap-panel">
     <div class="tap-panel-title">
-        <span>Joueurs</span>
+        <span>Players</span>
         <button
             type="button"
             class="tap-btn px-1.5 py-0.5"
             onclick={() => game.refreshWho()}
-            aria-label="rafraîchir"
+            aria-label="refresh"
         >
             <RefreshCw size={11} />
         </button>
     </div>
     {#if game.onlinePlayers.length === 0}
-        <div class="text-[12px] text-white/55">Personne en ligne.</div>
+        <div class="text-[12px] text-white/55">No one online.</div>
     {:else}
         <ul class="space-y-1">
             {#each game.onlinePlayers as p}
