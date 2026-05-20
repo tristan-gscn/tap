@@ -14,6 +14,22 @@ pub async fn inventory(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
         None => return Response::error(403, "Connect first"),
     };
 
+    let cfg = crate::config::get();
     let items = state.players[&name].inventory.clone();
-    Response::ok("inventory", json!({ "items": items }))
+    let items_detail: Vec<_> = items
+        .iter()
+        .map(|id| {
+            let display = cfg
+                .world
+                .items
+                .get(id)
+                .map(|i| i.name.as_str())
+                .unwrap_or(id.as_str());
+            json!({ "id": id, "name": display })
+        })
+        .collect();
+    Response::ok(
+        "inventory",
+        json!({ "items": items, "items_detail": items_detail }),
+    )
 }

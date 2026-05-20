@@ -30,8 +30,12 @@ pub async fn status(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     Response::ok(
         "status",
         json!({
+            "name": player.name,
+            "class": player.class,
             "hp": player.hp,
             "max_hp": player.max_hp,
+            "xp": player.xp,
+            "room": player.room,
             "status": status_label(player.hp, player.max_hp),
         }),
     )

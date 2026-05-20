@@ -22,6 +22,7 @@
   "dependencies": {
     "@threlte/core": "^8.5.14",
     "@threlte/extras": "^9.19.0",
+    "lucide-svelte": "^1.0.1",
     "three": "^0.184.0"
   }
 }

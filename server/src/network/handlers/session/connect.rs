@@ -10,6 +10,7 @@ use crate::state::player::Player;
 
 pub async fn connect(
     name: String,
+    class: Option<String>,
     addr: &str,
     tx: &mpsc::UnboundedSender<Response>,
     state: Arc<RwLock<GameState>>,
@@ -20,7 +21,7 @@ pub async fn connect(
         return Response::error(201, "NAME_IN_USE");
     }
 
-    let player = Player::new(name.clone(), addr.to_string(), tx.clone());
+    let player = Player::new(name.clone(), addr.to_string(), class.clone(), tx.clone());
     let room = player.room.clone();
     state.players.insert(name.clone(), player);
 
@@ -29,10 +30,17 @@ pub async fn connect(
         None,
         Response::ok(
             "event",
-            json!({ "event": "presence_enter", "name": name }),
+            json!({
+                "event": "presence_enter",
+                "name": name,
+                "class": class,
+            }),
         ),
     );
 
-    info!(player = %name, "Player joined");
-    Response::ok("connect", json!({ "name": name }))
+    info!(player = %name, class = ?class, "Player joined");
+    Response::ok(
+        "connect",
+        json!({ "name": name, "class": class }),
+    )
 }

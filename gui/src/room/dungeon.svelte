@@ -1,6 +1,17 @@
 <script lang="ts">
   import { T } from "@threlte/core";
   import { OrbitControls, useGltf } from "@threlte/extras";
+  import type { IntersectionEvent } from "@threlte/extras";
+
+  type Direction = "north" | "south" | "east" | "west";
+
+  type Props = {
+    onDoorClick?: (direction: Direction) => void;
+    onFloorClick?: (position: [number, number, number]) => void;
+    availableExits?: Direction[];
+  };
+
+  let { onDoorClick, onFloorClick, availableExits = [] }: Props = $props();
 
   const sizeX = 20;
   const sizeZ = 10;
@@ -72,37 +83,44 @@
 
   const torchLightMounts = torchMounts.filter((_, index) => index % 2 === 0);
 
-  type ActorModel = "barrel" | "chest" | "torch" | "door";
+  const doorInset = 0.5;
+  const doorLift = 0.02;
+
+  type DoorMount = {
+    direction: Direction;
+    position: [number, number, number];
+    rotation: [number, number, number];
+  };
+
+  const doorMounts: DoorMount[] = [
+    {
+      direction: "north",
+      position: [doorX, doorLift, WALL_N + doorInset],
+      rotation: [0, 0, 0],
+    },
+    {
+      direction: "south",
+      position: [doorX, doorLift, WALL_S - doorInset],
+      rotation: [0, Math.PI, 0],
+    },
+    {
+      direction: "west",
+      position: [WALL_W + doorInset, doorLift, doorZ],
+      rotation: [0, Math.PI / 2, 0],
+    },
+    {
+      direction: "east",
+      position: [WALL_E - doorInset, doorLift, doorZ],
+      rotation: [0, -Math.PI / 2, 0],
+    },
+  ];
+
+  type ActorModel = "barrel" | "chest" | "torch";
   type ActorItem = {
     model: ActorModel;
     position: [number, number, number];
     rotation?: [number, number, number];
   };
-
-  const doorInset = 0.5;
-  const doorLift = 0.02;
-  const doorActors: ActorItem[] = [
-    {
-      model: "door",
-      position: [doorX, doorLift, WALL_N + doorInset],
-      rotation: [0, 0, 0],
-    },
-    {
-      model: "door",
-      position: [doorX, doorLift, WALL_S - doorInset],
-      rotation: [0, Math.PI, 0],
-    },
-    {
-      model: "door",
-      position: [WALL_W + doorInset, doorLift, doorZ],
-      rotation: [0, Math.PI / 2, 0],
-    },
-    {
-      model: "door",
-      position: [WALL_E - doorInset, doorLift, doorZ],
-      rotation: [0, -Math.PI / 2, 0],
-    },
-  ];
 
   const actorProps: ActorItem[] = [
     { model: "barrel", position: [2, 0, 6] },
@@ -114,8 +132,7 @@
     },
   ];
 
-  const actors: ActorItem[] = [
-    ...doorActors,
+  const sceneryActors: ActorItem[] = [
     ...torchMounts.map(
       (torchMount): ActorItem => ({
         model: "torch",
@@ -125,6 +142,8 @@
     ),
     ...actorProps,
   ];
+
+  let hoveredDoor = $state<Direction | null>(null);
 </script>
 
 <T.AmbientLight intensity={0.08} color="#0b0b14" />
@@ -177,6 +196,20 @@
               {/each}
             {/each}
 
+            <!-- Invisible clickable floor plane for click-to-move -->
+            <T.Mesh
+              position={[lastX / 2, 0.05, lastZ / 2]}
+              rotation={[-Math.PI / 2, 0, 0]}
+              onclick={(e: IntersectionEvent<MouseEvent>) => {
+                if (!onFloorClick) return;
+                const p = e.point;
+                onFloorClick([p.x, 0, p.z]);
+              }}
+            >
+              <T.PlaneGeometry args={[lastX + 4, lastZ + 4]} />
+              <T.MeshBasicMaterial transparent opacity={0} />
+            </T.Mesh>
+
             {#each tilesX as i}
               {#if i !== doorXIndex}
                 <T.Group position={[i * 2, 0, WALL_N]}>
@@ -208,7 +241,37 @@
               {/if}
             {/each}
 
-            {#each actors as actor}
+            {#each doorMounts as dm (dm.direction)}
+              {@const enabled = availableExits.includes(dm.direction)}
+              <T.Group
+                position={dm.position}
+                rotation={dm.rotation}
+                onclick={(e: IntersectionEvent<MouseEvent>) => {
+                  if (!enabled || !onDoorClick) return;
+                  e.stopPropagation();
+                  onDoorClick(dm.direction);
+                }}
+                onpointerenter={() => enabled && (hoveredDoor = dm.direction)}
+                onpointerleave={() => hoveredDoor === dm.direction && (hoveredDoor = null)}
+              >
+                <T is={doorModel.scene.clone()} />
+              </T.Group>
+              {#if enabled}
+                <T.PointLight
+                  position={[
+                    dm.position[0],
+                    1.5,
+                    dm.position[2],
+                  ]}
+                  intensity={hoveredDoor === dm.direction ? 12 : 5}
+                  distance={6}
+                  decay={2}
+                  color="#f5d177"
+                />
+              {/if}
+            {/each}
+
+            {#each sceneryActors as actor}
               <T.Group
                 position={actor.position}
                 rotation={actor.rotation ?? [0, 0, 0]}
@@ -219,8 +282,6 @@
                   <T is={chestModel.scene.clone()} />
                 {:else if actor.model === "torch"}
                   <T is={torchModel.scene.clone()} />
-                {:else if actor.model === "door"}
-                  <T is={doorModel.scene.clone()} />
                 {/if}
               </T.Group>
             {/each}

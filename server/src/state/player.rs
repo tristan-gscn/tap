@@ -17,6 +17,7 @@ pub struct QuestProgress {
 pub struct Player {
     pub name: String,
     pub addr: String,
+    pub class: Option<String>,
     pub room: String,
     pub tx: UnboundedSender<Response>,
     pub inventory: Vec<String>,
@@ -29,10 +30,16 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(name: String, addr: String, tx: UnboundedSender<Response>) -> Self {
+    pub fn new(
+        name: String,
+        addr: String,
+        class: Option<String>,
+        tx: UnboundedSender<Response>,
+    ) -> Self {
         Player {
             name,
             addr,
+            class,
             room: "start".to_string(),
             tx,
             inventory: Vec::new(),
