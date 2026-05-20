@@ -1,8 +1,6 @@
 <script lang="ts">
-    import LiquidGlassPanel from '../LiquidGlassPanel.svelte';
     import { game } from '../../state/game.svelte';
     import { resolveItemIcon } from '../../registries/itemIcons';
-    import type { ItemDetail } from '../../state/game.svelte';
 
     const INVENTORY_SLOTS = 16;
 
