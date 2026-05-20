@@ -9,6 +9,7 @@ use crate::config::Direction;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the MOVE command, allowing a player to move to an adjacent room.
 pub async fn move_player(
     direction: Direction,
     addr: &str,

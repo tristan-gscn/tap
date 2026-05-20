@@ -7,6 +7,8 @@ use crate::protocol::command::Command;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Routes a parsed command to the appropriate logic handler.
+/// Returns a `Response` that will be sent back to the client.
 pub async fn dispatch(
     cmd: Command,
     addr: &str,

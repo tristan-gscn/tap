@@ -4,6 +4,7 @@ use crate::config;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Sends quest progress notifications to a player for the specified quest IDs.
 pub fn notify_progress(state: &GameState, name: &str, quest_ids: &[String]) {
     let cfg = config::get();
     let Some(player) = state.players.get(name) else {

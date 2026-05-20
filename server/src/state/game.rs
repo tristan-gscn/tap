@@ -25,6 +25,7 @@ pub struct GameState {
 }
 
 impl GameState {
+    /// Creates a new, empty `GameState` with the world initialized from the configuration.
     pub fn new() -> Self {
         GameState {
             players: HashMap::new(),
@@ -34,12 +35,14 @@ impl GameState {
         }
     }
 
+    /// Sends a response directly to a specific player by name.
     pub fn send_to(&self, name: &str, msg: Response) {
         if let Some(p) = self.players.get(name) {
             let _ = p.tx.send(msg);
         }
     }
 
+    /// Broadcasts a response to all players in a specific room, optionally excluding one player.
     pub fn broadcast_room(&self, room: &str, except: Option<&str>, msg: Response) {
         for p in self.players.values() {
             if p.room == room && Some(p.name.as_str()) != except {
@@ -48,6 +51,7 @@ impl GameState {
         }
     }
 
+    /// Broadcasts a response to all connected players, optionally excluding one player.
     pub fn broadcast_all(&self, except: Option<&str>, msg: Response) {
         for p in self.players.values() {
             if Some(p.name.as_str()) != except {
@@ -56,6 +60,7 @@ impl GameState {
         }
     }
 
+    /// Broadcasts a response to all members of a group, optionally excluding one player.
     pub fn broadcast_group(&self, gid: GroupId, except: Option<&str>, msg: Response) {
         if let Some(g) = self.groups.get(&gid) {
             for member in &g.members {
@@ -66,6 +71,7 @@ impl GameState {
         }
     }
 
+    /// Finds the player name associated with a network address.
     pub fn name_of(&self, addr: &str) -> Option<String> {
         self.players
             .values()
@@ -73,6 +79,7 @@ impl GameState {
             .map(|p| p.name.clone())
     }
 
+    /// Finds a group ID by the leader's name.
     pub fn group_by_leader(&self, leader: &str) -> Option<GroupId> {
         self.groups
             .values()
@@ -80,6 +87,7 @@ impl GameState {
             .map(|g| g.id)
     }
 
+    /// Creates a new group with the specified leader.
     pub fn create_group(&mut self, leader: &str) -> GroupId {
         let gid = self.next_group_id;
         self.next_group_id += 1;
@@ -90,12 +98,14 @@ impl GameState {
         gid
     }
 
+    /// Invites a target player to join a group.
     pub fn invite_to_group(&mut self, gid: GroupId, target: &str) {
         if let Some(g) = self.groups.get_mut(&gid) {
             g.invited.insert(target.to_string());
         }
     }
 
+    /// Checks if a player has been invited to a specific group.
     pub fn is_invited(&self, gid: GroupId, name: &str) -> bool {
         self.groups
             .get(&gid)
@@ -103,6 +113,7 @@ impl GameState {
             .unwrap_or(false)
     }
 
+    /// Adds a player to a group and clears their invitation.
     pub fn join_group(&mut self, gid: GroupId, name: &str) {
         if let Some(g) = self.groups.get_mut(&gid) {
             g.invited.remove(name);
@@ -115,6 +126,7 @@ impl GameState {
         }
     }
 
+    /// Removes a player from their group. If the player is the leader, the group is disbanded.
     pub fn leave_group(&mut self, name: &str) -> GroupLeave {
         let gid = match self.players.get(name).and_then(|p| p.group) {
             Some(gid) => gid,

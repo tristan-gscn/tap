@@ -6,6 +6,8 @@ use tokio::sync::RwLock;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the `QUIT` command from a client.
+/// Removes the player from the game state. Note: the actual socket closure is handled in the connection loop.
 pub async fn quit(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let mut state = state.write().await;
 

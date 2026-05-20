@@ -49,6 +49,8 @@ pub enum Command {
 }
 
 impl Command {
+    /// Parses a raw command line from the client into a `Command` enum.
+    /// Returns a `Response::Error` if the parsing fails or if required arguments are missing.
     pub fn parse(line: &str) -> Result<Self, Response> {
         let mut parts = line.splitn(2, ' ');
         let verb = parts.next().unwrap_or("").to_uppercase();
@@ -97,6 +99,7 @@ impl Command {
     }
 }
 
+/// Parses the `CONNECT` command and its scope.
 fn parse_connect(rest: &str) -> Result<Command, Response> {
     let mut p = rest.splitn(2, ' ');
     let name = p.next().unwrap_or("").trim().to_string();
@@ -107,6 +110,7 @@ fn parse_connect(rest: &str) -> Result<Command, Response> {
     Ok(Command::Connect { name, class })
 }
 
+/// Helper function to ensure that a command argument is present.
 fn require(rest: &str, msg: &'static str) -> Result<String, Response> {
     if rest.is_empty() {
         Err(Response::error(400, msg))
@@ -115,6 +119,7 @@ fn require(rest: &str, msg: &'static str) -> Result<String, Response> {
     }
 }
 
+/// Parses the `CHAT` command and its scope.
 fn parse_chat(rest: &str) -> Result<Command, Response> {
     let mut p = rest.splitn(2, ' ');
     let scope_raw = p.next().unwrap_or("").to_uppercase();
@@ -143,6 +148,7 @@ fn parse_chat(rest: &str) -> Result<Command, Response> {
     }
 }
 
+/// Parses the `GROUP` command and its subcommands.
 fn parse_group(rest: &str) -> Result<Command, Response> {
     let mut p = rest.splitn(2, ' ');
     let sub = p.next().unwrap_or("").to_uppercase();
@@ -168,6 +174,7 @@ fn parse_group(rest: &str) -> Result<Command, Response> {
     Ok(Command::Group(action))
 }
 
+/// Parses the `QUEST` command and its subcommands.
 fn parse_quest(rest: &str) -> Result<Command, Response> {
     let mut p = rest.splitn(2, ' ');
     let sub = p.next().unwrap_or("").to_uppercase();

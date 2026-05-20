@@ -10,6 +10,8 @@ use tracing::{error, info};
 
 const LISTEN_ADDR: &str = "127.0.0.1:4000";
 
+/// Entry point for the TAP Server.
+/// Initializes the logger, loads the world configuration, and starts the network listener.
 #[tokio::main]
 async fn main() {
     logger::init();

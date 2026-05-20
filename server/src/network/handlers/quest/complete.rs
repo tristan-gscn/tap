@@ -6,6 +6,7 @@ use crate::config;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the QUEST COMPLETE subcommand, completing a quest by ID and granting rewards.
 pub fn complete(state: &mut GameState, name: &str, id: String) -> Response {
     let qid = match resolve_quest(&id) {
         Some(q) => q,

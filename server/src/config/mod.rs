@@ -25,6 +25,7 @@ pub enum ConfigError {
 }
 
 impl fmt::Display for ConfigError {
+	/// Formats the configuration error for display.
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		match self {
 			ConfigError::Io { path, .. } => {
@@ -41,6 +42,7 @@ impl fmt::Display for ConfigError {
 }
 
 impl Error for ConfigError {
+	/// Returns the underlying error, if any.
 	fn source(&self) -> Option<&(dyn Error + 'static)> {
 		match self {
 			ConfigError::Io { source, .. } => Some(source),
@@ -50,11 +52,13 @@ impl Error for ConfigError {
 	}
 }
 
+/// Returns the global configuration cell.
 fn config_cell() -> &'static OnceLock<Config> {
 	static CONFIG: OnceLock<Config> = OnceLock::new();
 	&CONFIG
 }
 
+/// Loads the configuration from a YAML file.
 pub fn load_from_yaml<P: AsRef<Path>>(path: P) -> Result<Config, ConfigError> {
 	let path_ref: &Path = path.as_ref();
 	let path_str: String = path_ref.to_string_lossy().to_string();
@@ -78,6 +82,8 @@ pub fn load_from_yaml<P: AsRef<Path>>(path: P) -> Result<Config, ConfigError> {
 	Ok(config)
 }
 
+/// Initializes the global configuration from a YAML file.
+/// Returns a reference to the loaded configuration, or a `ConfigError` if initialization fails.
 pub fn init_global<P: AsRef<Path>>(path: P) -> Result<&'static Config, ConfigError> {
 	let config = load_from_yaml(path)?;
 	config_cell()
@@ -88,6 +94,9 @@ pub fn init_global<P: AsRef<Path>>(path: P) -> Result<&'static Config, ConfigErr
 		.expect("Config was just initialized"))
 }
 
+/// Returns a reference to the global configuration.
+/// # Panics
+/// Panics if the configuration has not been initialized.
 #[allow(dead_code)]
 pub fn get() -> &'static Config {
 	config_cell()

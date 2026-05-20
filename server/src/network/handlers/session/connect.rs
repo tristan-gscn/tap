@@ -8,6 +8,8 @@ use crate::protocol::response::Response;
 use crate::state::game::GameState;
 use crate::state::player::Player;
 
+/// Handles a player's initial connection and registration with a name.
+/// Broadcasts a presence event to other players in the same room.
 pub async fn connect(
     name: String,
     class: Option<String>,

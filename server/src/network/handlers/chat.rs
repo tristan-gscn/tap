@@ -7,6 +7,7 @@ use crate::protocol::command::ChatScope;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the CHAT command, broadcasting messages to global, room, or group scope.
 pub async fn chat(
     scope: ChatScope,
     text: String,

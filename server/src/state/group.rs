@@ -10,6 +10,7 @@ pub struct Group {
 }
 
 impl Group {
+    /// Creates a new group with a leader as the first member.
     pub fn new(id: GroupId, leader: String) -> Self {
         Group {
             id,
@@ -19,6 +20,7 @@ impl Group {
         }
     }
 
+    /// Removes a member from the group by name.
     pub fn remove_member(&mut self, name: &str) {
         self.members.retain(|m| m != name);
     }

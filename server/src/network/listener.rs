@@ -5,6 +5,8 @@ use tokio::sync::RwLock;
 use crate::state::game::GameState;
 use tracing::{error, info};
 
+/// Starts the TCP listener on the specified address.
+/// For each new connection, it spawns an asynchronous task to handle the client session.
 pub async fn start(addr: &str, state: Arc<RwLock<GameState>>) {
     let listener = TcpListener::bind(addr).await.expect("Failed to bind port");
     info!("Listening on {}", addr);

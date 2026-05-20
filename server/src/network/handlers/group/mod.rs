@@ -11,6 +11,7 @@ use crate::protocol::command::GroupAction;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Routes a GROUP action to the appropriate handler based on the subcommand.
 pub async fn group(action: GroupAction, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let mut state = state.write().await;
 

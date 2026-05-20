@@ -4,6 +4,7 @@ use tracing::info;
 use crate::protocol::response::Response;
 use crate::state::game::{GameState, GroupLeave};
 
+/// Handles the GROUP LEAVE subcommand, removing the player from their group.
 pub fn leave(state: &mut GameState, name: &str) -> Response {
     match state.leave_group(name) {
         GroupLeave::NotInGroup => Response::error(401, "NOT_IN_GROUP"),

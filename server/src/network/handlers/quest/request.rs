@@ -7,6 +7,7 @@ use crate::protocol::response::Response;
 use crate::state::game::GameState;
 use crate::state::player::QuestProgress;
 
+/// Handles the QUEST <NPC> command, requesting a quest from an NPC.
 pub fn request(state: &mut GameState, name: &str, npc_query: String) -> Response {
     let room = state.players[name].room.clone();
     let npc_type = match resolve_npc(&npc_query) {

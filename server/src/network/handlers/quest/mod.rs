@@ -17,6 +17,7 @@ use crate::state::game::GameState;
 
 pub use progress::notify_progress;
 
+/// Routes a QUEST action to the appropriate handler based on the subcommand.
 pub async fn quest(action: QuestAction, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let mut state = state.write().await;
 
@@ -35,6 +36,7 @@ pub async fn quest(action: QuestAction, addr: &str, state: Arc<RwLock<GameState>
     }
 }
 
+/// Resolves a quest query by ID, returning the canonical quest ID if found.
 pub fn resolve_quest(query: &str) -> Option<String> {
     let q = query.trim();
     config::get()

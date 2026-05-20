@@ -4,6 +4,7 @@ use tracing::info;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Handles the GROUP JOIN subcommand, allowing a player to join a group they were invited to.
 pub fn join(state: &mut GameState, name: &str, leader: String) -> Response {
     if state.players[name].group.is_some() {
         return Response::error(402, "ALREADY_IN_GROUP");

@@ -10,6 +10,7 @@ use crate::protocol::response::Response;
 use crate::state::game::GameState;
 use crate::state::world::AttackOutcome;
 
+/// Handles the ATTACK command, allowing a player to damage an NPC in their room.
 pub async fn attack(query: String, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let mut state = state.write().await;
 

@@ -30,6 +30,7 @@ impl Location {
     }
 
     #[allow(dead_code)]
+    /// Removes an item by name from this location's item list.
     pub fn remove_item(&mut self, item_name: &str) -> bool {
         if let Some(index) = self.items.iter().position(|item| item == item_name) {
             self.items.remove(index);

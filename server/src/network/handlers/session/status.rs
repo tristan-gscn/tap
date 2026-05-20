@@ -6,6 +6,7 @@ use tokio::sync::RwLock;
 use crate::protocol::response::Response;
 use crate::state::game::GameState;
 
+/// Returns a descriptive label for a given HP level.
 fn status_label(hp: i32, max_hp: i32) -> &'static str {
     if hp <= 0 {
         "dead"
@@ -18,6 +19,8 @@ fn status_label(hp: i32, max_hp: i32) -> &'static str {
     }
 }
 
+/// Handles the `STATUS` command.
+/// Returns the player's current health status.
 pub async fn status(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
     let state = state.read().await;
 
