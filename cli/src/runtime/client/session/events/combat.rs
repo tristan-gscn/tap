@@ -12,10 +12,10 @@ pub fn handle_combat(session: &mut Session, ev: &str, data: &Value) -> bool {
             if let Some(n) = session.app.room.npcs.iter_mut().find(|n| n.id == npc_id) {
                 n.hp = hp;
             }
-            session
-                .app
-                .logs
-                .push(format!("\u{2694} {} hit {} #{} ({} hp)", by, npc, npc_id, hp));
+            session.app.logs.push(format!(
+                "\u{2694} {} hit {} #{} ({} hp)",
+                by, npc, npc_id, hp
+            ));
             true
         }
         "npc_killed" => {
@@ -30,10 +30,10 @@ pub fn handle_combat(session: &mut Session, ev: &str, data: &Value) -> bool {
             let killer = data.get("by").and_then(|v| v.as_str()).unwrap_or("?");
             session.app.status.hp_current = session.app.status.hp_max;
             session.app.status.combat_status = format!("Defeated by {} — respawned", killer);
-            session
-                .app
-                .logs
-                .push(format!("\u{2694} you were defeated by {} and respawned", killer));
+            session.app.logs.push(format!(
+                "\u{2694} you were defeated by {} and respawned",
+                killer
+            ));
             let _ = session.refresh_look();
             true
         }

@@ -1,5 +1,5 @@
-mod logger;
 mod config;
+mod logger;
 mod network;
 mod protocol;
 mod state;
@@ -17,10 +17,32 @@ async fn main() {
     logger::init();
     info!("Server starting...");
 
-    if let Err(err) = config::init_global("world.yml") {
-        error!(error = %err, "Failed to initialize config");
+    let cfg = match config::init_global("world.yml") {
+        Ok(cfg) => cfg,
+        Err(err) => {
+            error!(error = %err, "Failed to initialize config");
+            std::process::exit(1);
+        }
+    };
+
+    let problems = config::validate(cfg);
+    if !problems.is_empty() {
+        for problem in &problems {
+            error!(problem = %problem, "World validation error");
+        }
+        error!(
+            count = problems.len(),
+            "World data is invalid; refusing to start"
+        );
         std::process::exit(1);
     }
+    info!(
+        rooms = cfg.world.locations.len(),
+        npcs = cfg.world.npcs.len(),
+        items = cfg.world.items.len(),
+        quests = cfg.world.quests.len(),
+        "World loaded and validated"
+    );
 
     let game_state = Arc::new(RwLock::new(state::game::GameState::new()));
 

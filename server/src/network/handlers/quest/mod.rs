@@ -3,8 +3,8 @@ mod complete;
 mod list;
 mod progress;
 mod request;
-mod summary;
 mod status;
+mod summary;
 
 use std::sync::Arc;
 

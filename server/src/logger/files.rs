@@ -23,7 +23,12 @@ fn open_files() -> &'static Mutex<Option<OpenFiles>> {
 fn open_for(date: &str) -> io::Result<OpenFiles> {
     let dir = PathBuf::from("logs").join(date);
     fs::create_dir_all(&dir)?;
-    let append = |name: &str| OpenOptions::new().create(true).append(true).open(dir.join(name));
+    let append = |name: &str| {
+        OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(dir.join(name))
+    };
     Ok(OpenFiles {
         date: date.to_string(),
         stdout: append("stdout.jsonl")?,
@@ -40,7 +45,7 @@ impl Write for DailyWriter {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         let mut guard = open_files().lock().unwrap_or_else(|e| e.into_inner());
         let today = Local::now().format("%Y-%m-%d").to_string();
-        if guard.as_ref().map_or(true, |f| f.date != today) {
+        if guard.as_ref().is_none_or(|f| f.date != today) {
             *guard = Some(open_for(&today)?);
         }
         let files = guard.as_mut().expect("opened just above");
@@ -74,6 +79,8 @@ impl<'a> MakeWriter<'a> for DailyJsonFiles {
 
     /// Creates a writer configured for the log level in metadata.
     fn make_writer_for(&'a self, meta: &Metadata<'_>) -> Self::Writer {
-        DailyWriter { error: *meta.level() == Level::ERROR }
+        DailyWriter {
+            error: *meta.level() == Level::ERROR,
+        }
     }
 }

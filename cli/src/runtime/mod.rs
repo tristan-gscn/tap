@@ -1,12 +1,14 @@
-use std::io;
 use crossterm::execute;
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen};
+use crossterm::terminal::{
+    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
+};
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
+use std::io;
 
 mod client;
-mod loop_run;
 mod keys;
+mod loop_run;
 
 /// Starts the CLI runtime.
 /// Establishes the connection, initializes the terminal, and runs the main loop.

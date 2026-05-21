@@ -35,11 +35,23 @@ pub struct LookNpc {
     pub id: u64,
     #[serde(rename = "type")]
     pub kind: String,
+    #[serde(default)]
+    pub name: Option<String>,
     pub hp: i64,
     pub max_hp: i64,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct EquippedSlots {
+    #[serde(default)]
+    pub right: Option<String>,
+    #[serde(default)]
+    pub left: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct InventoryResponse {
     pub items: Vec<String>,
+    #[serde(default)]
+    pub equipped: EquippedSlots,
 }

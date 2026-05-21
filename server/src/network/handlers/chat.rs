@@ -51,8 +51,5 @@ pub async fn chat(
         },
     }
 
-    Response::ok(
-        "chat",
-        json!({ "scope": scope_label, "text": text }),
-    )
+    Response::ok("chat", json!({ "scope": scope_label, "text": text }))
 }

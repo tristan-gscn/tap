@@ -12,6 +12,7 @@
     import { itemPosition, npcPosition, otherPlayerPosition } from './utils/positions';
     import type { IntersectionEvent } from '@threlte/extras';
     import GroundItem from './actors/GroundItem.svelte';
+    import SackItem from './actors/SackItem.svelte';
 
     interactivity();
 
@@ -78,17 +79,21 @@
 
     function handleNpcPointer(
         e: IntersectionEvent<PointerEvent>,
-        npcType: string,
-        npcId: number,
+        npc: { id: number; type: string; hostile: boolean },
         pos: [number, number, number]
     ) {
         e.stopPropagation();
-        const button = (e as unknown as { event: PointerEvent }).event?.button ?? 0;
-        if (button === 2) {
-            game.talkAndQuest(npcType);
+        // Peaceful NPCs can't be attacked: any click talks to them and asks for a quest.
+        if (!npc.hostile) {
+            game.talkAndQuest(npc.type);
             return;
         }
-        game.requestAttack(npcId, npcType, pos);
+        const button = (e as unknown as { event: PointerEvent }).event?.button ?? 0;
+        if (button === 2) {
+            game.talk(npc.type);
+            return;
+        }
+        game.requestAttack(npc.id, npc.type, pos);
     }
 </script>
 
@@ -109,7 +114,7 @@
     <T.Group
         position={pos}
         rotation={[0, Math.PI, 0]}
-        onpointerdown={(e: IntersectionEvent<PointerEvent>) => handleNpcPointer(e, npc.type, npc.id, pos)}
+        onpointerdown={(e: IntersectionEvent<PointerEvent>) => handleNpcPointer(e, npc, pos)}
         onpointerenter={() => {
             hoveredNpcId = npc.id;
             setCursor('pointer');
@@ -140,25 +145,44 @@
             </T.Group>
         {/if}
     </T.Group>
+    <!-- Glow around each NPC so it stands out from the gloom -->
+    <T.PointLight
+        position={[pos[0], 2.4, pos[2]]}
+        intensity={hoveredNpcId === npc.id ? 14 : 8}
+        distance={8}
+        decay={2}
+        color="#bcd4ff"
+    />
 {/each}
 
 {#each game.itemsDetail as item, i (item.id)}
     {@const url = resolveItemProp(item.id)}
     {@const pos = itemPosition(item.id, i, game.itemsDetail.length)}
-    {#if url}
-        <T.Group
-            position={pos}
-            rotation={[0, Math.PI, 0]}
-            onpointerenter={() => setCursor('pointer')}
-            onpointerleave={() => setCursor('default')}
-            onpointerdown={(e: IntersectionEvent<PointerEvent>) => {
-                e.stopPropagation();
-                game.take(item.id);
-            }}
-        >
+    <T.Group
+        position={pos}
+        rotation={[0, Math.PI, 0]}
+        onpointerenter={() => setCursor('pointer')}
+        onpointerleave={() => setCursor('default')}
+        onpointerdown={(e: IntersectionEvent<PointerEvent>) => {
+            e.stopPropagation();
+            game.take(item.id);
+        }}
+    >
+        {#if url}
             <GroundItem url={url} />
-        </T.Group>
-    {/if}
+        {:else}
+            <!-- Unknown item: drop a generic loot sack -->
+            <SackItem />
+        {/if}
+    </T.Group>
+    <!-- Warm glow marking a pickup -->
+    <T.PointLight
+        position={[pos[0], 1.4, pos[2]]}
+        intensity={7}
+        distance={6}
+        decay={2}
+        color="#ffd79a"
+    />
 {/each}
 
 {#each otherPlayers as name (name)}

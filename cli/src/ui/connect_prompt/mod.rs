@@ -1,5 +1,5 @@
-mod draw;
 mod cleanup;
+mod draw;
 mod layout;
 
 pub struct ConnectInfo {
@@ -24,4 +24,4 @@ pub fn prompt_player_info() -> std::io::Result<ConnectInfo> {
 }
 
 use crossterm::execute;
-use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode};
+use crossterm::terminal::{enable_raw_mode, EnterAlternateScreen};

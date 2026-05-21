@@ -51,8 +51,7 @@ pub fn request(state: &mut GameState, name: &str, npc_query: String) -> Response
     };
 
     if let Some(p) = state.players.get_mut(name) {
-        p.quests
-            .insert(quest_id.clone(), QuestProgress::default());
+        p.quests.insert(quest_id.clone(), QuestProgress::default());
     }
 
     state.send_to(

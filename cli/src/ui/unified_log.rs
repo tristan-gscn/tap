@@ -1,8 +1,11 @@
+use crate::app::App;
 use ratatui::layout::Rect;
 use ratatui::text::Line;
 use ratatui::widgets::{Block, Borders, List, ListItem};
-use ratatui::{style::{Color, Style}, Frame};
-use crate::app::App;
+use ratatui::{
+    style::{Color, Style},
+    Frame,
+};
 
 /// Classifies a log line for styling based on its prefix.
 fn classify(line: &str) -> (Style, &str) {
@@ -63,7 +66,11 @@ fn wrap(s: &str, width: usize) -> Vec<String> {
             continue;
         }
         let cur_len = cur.chars().count();
-        let need = if cur_len == 0 { wlen } else { cur_len + 1 + wlen };
+        let need = if cur_len == 0 {
+            wlen
+        } else {
+            cur_len + 1 + wlen
+        };
         if need > width {
             lines.push(std::mem::take(&mut cur));
             cur = word.to_string();
@@ -94,11 +101,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     }
 
     let start = all.len().saturating_sub(max_lines);
-    let mut items: Vec<ListItem> = all[start..]
-        .iter()
-        .cloned()
-        .map(ListItem::new)
-        .collect();
+    let mut items: Vec<ListItem> = all[start..].iter().cloned().map(ListItem::new).collect();
     if items.len() < max_lines {
         let pad = max_lines - items.len();
         let mut padded = vec![ListItem::new(Line::from("")); pad];

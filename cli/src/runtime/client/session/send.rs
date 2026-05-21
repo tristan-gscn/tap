@@ -1,6 +1,8 @@
 use std::io;
 
-use super::super::protocol::{parse_look, ApiResponse, InventoryResponse, LookResponse};
+use super::super::protocol::{
+    parse_inventory, parse_look, ApiResponse, InventoryResponse, LookResponse,
+};
 use super::Session;
 use crate::app::{RoomMock, RoomNpc};
 
@@ -12,6 +14,7 @@ pub fn look_to_room(look: LookResponse) -> RoomMock {
         .map(|n| RoomNpc {
             id: n.id,
             kind: n.kind,
+            name: n.name,
             hp: n.hp,
             max_hp: n.max_hp,
         })
@@ -43,7 +46,9 @@ impl Session {
                 self.app.logs.push(format!("<server> {}", msg));
             }
             ApiResponse::Error { code, message } => {
-                self.app.logs.push(format!("<server> ERR {} {}", code, message));
+                self.app
+                    .logs
+                    .push(format!("<server> ERR {} {}", code, message));
             }
         }
     }
@@ -56,6 +61,8 @@ impl Session {
     /// Applies an INVENTORY response to the player's status.
     pub fn apply_inventory_to_status(&mut self, inventory: InventoryResponse) {
         self.app.status.inventory = inventory.items;
+        self.app.status.equipped_right = inventory.equipped.right;
+        self.app.status.equipped_left = inventory.equipped.left;
     }
 
     /// Sends a LOOK command to refresh the current room state.
@@ -67,6 +74,19 @@ impl Session {
                 .app
                 .logs
                 .push(format!("[Client] LOOK refresh failed: {}", err)),
+        }
+        Ok(())
+    }
+
+    /// Sends an INVENTORY command to refresh the player's carried items.
+    pub fn refresh_inventory(&mut self) -> io::Result<()> {
+        let resp = self.send_command("INVENTORY")?;
+        match parse_inventory(resp) {
+            Ok(inv) => self.apply_inventory_to_status(inv),
+            Err(err) => self
+                .app
+                .logs
+                .push(format!("[Client] INVENTORY refresh failed: {}", err)),
         }
         Ok(())
     }

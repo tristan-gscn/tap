@@ -19,7 +19,10 @@ pub fn handle(session: &mut Session, resp: ApiResponse) {
             }
         }
         ApiResponse::Error { code, message } => {
-            session.app.logs.push(format!("<server> ERR {} {}", code, message));
+            session
+                .app
+                .logs
+                .push(format!("<server> ERR {} {}", code, message));
         }
         _ => {}
     }

@@ -14,6 +14,7 @@ export type NpcInfo = {
     type: string;
     name: string;
     model: string | null;
+    hostile: boolean;
     hp: number;
     max_hp: number;
 };

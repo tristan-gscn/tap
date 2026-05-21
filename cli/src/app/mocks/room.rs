@@ -3,14 +3,16 @@ use std::collections::BTreeMap;
 pub struct RoomNpc {
     pub id: u64,
     pub kind: String,
+    pub name: Option<String>,
     pub hp: i64,
     pub max_hp: i64,
 }
 
 impl RoomNpc {
-    /// Returns a human-readable label for the NPC, including HP.
+    /// Returns a human-readable label for the NPC, preferring its display name.
     pub fn label(&self) -> String {
-        format!("{} #{}  {}/{} hp", self.kind, self.id, self.hp, self.max_hp)
+        let display = self.name.as_deref().unwrap_or(&self.kind);
+        format!("{} #{}  {}/{} hp", display, self.id, self.hp, self.max_hp)
     }
 }
 

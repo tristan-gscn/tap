@@ -19,7 +19,10 @@ pub enum AttackOutcome {
         npc_hp: i32,
         npc_attack: i32,
     },
-    Killed { npc_id: u64, npc_type: String },
+    Killed {
+        npc_id: u64,
+        npc_type: String,
+    },
 }
 
 pub struct WorldState {
@@ -68,7 +71,10 @@ impl WorldState {
 
     /// Returns a slice of item IDs present in the specified room.
     pub fn items_in(&self, room: &str) -> &[String] {
-        self.room_items.get(room).map(|v| v.as_slice()).unwrap_or(&[])
+        self.room_items
+            .get(room)
+            .map(|v| v.as_slice())
+            .unwrap_or(&[])
     }
 
     /// Removes an item from a room by ID and returns whether it was removed.
@@ -84,7 +90,10 @@ impl WorldState {
 
     /// Adds an item ID to the specified room.
     pub fn add_item(&mut self, room: &str, item_id: String) {
-        self.room_items.entry(room.to_string()).or_default().push(item_id);
+        self.room_items
+            .entry(room.to_string())
+            .or_default()
+            .push(item_id);
     }
 
     /// Returns a slice of NPC instances present in the specified room.

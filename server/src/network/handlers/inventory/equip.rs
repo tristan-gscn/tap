@@ -15,7 +15,12 @@ fn slot_label(slot: EquipSlot) -> &'static str {
     }
 }
 
-pub async fn equip(slot: EquipSlot, query: String, addr: &str, state: Arc<RwLock<GameState>>) -> Response {
+pub async fn equip(
+    slot: EquipSlot,
+    query: String,
+    addr: &str,
+    state: Arc<RwLock<GameState>>,
+) -> Response {
     let mut state = state.write().await;
 
     let name = match state.name_of(addr) {

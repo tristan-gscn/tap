@@ -14,17 +14,17 @@ pub fn summary(state: &GameState, name: &str) -> Response {
         .iter()
         .filter_map(|(id, prog)| {
             let quest = cfg.world.quests.get(id)?;
-            let status = if prog.completed { "completed" } else { "active" };
+            let status = if prog.completed {
+                "completed"
+            } else {
+                "active"
+            };
             let mut entry = json!({
                 "quest_id": id,
                 "status": status,
             });
             if !prog.completed {
-                entry["progress"] = json!(format!(
-                    "{}/{}",
-                    prog.progress,
-                    quest.objective.count()
-                ));
+                entry["progress"] = json!(format!("{}/{}", prog.progress, quest.objective.count()));
             }
             Some(entry)
         })

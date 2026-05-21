@@ -27,6 +27,8 @@ pub struct PlayerStatusMock {
     pub xp: i64,
     pub combat_status: String,
     pub inventory: Vec<String>,
+    pub equipped_right: Option<String>,
+    pub equipped_left: Option<String>,
     pub quests: Vec<QuestEntry>,
 }
 
@@ -40,6 +42,8 @@ impl PlayerStatusMock {
             xp: 0,
             combat_status: "Calm".into(),
             inventory: Vec::new(),
+            equipped_right: None,
+            equipped_left: None,
             quests: Vec::new(),
         }
     }

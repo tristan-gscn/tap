@@ -9,11 +9,11 @@ pub struct Session {
     pub read_buf: Vec<u8>,
 }
 
-mod send;
-mod input;
-mod connect;
-mod reader;
-mod events;
 mod command;
+mod connect;
+mod events;
+mod input;
+mod reader;
+mod send;
 
 pub use connect::connect;

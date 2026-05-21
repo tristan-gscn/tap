@@ -41,8 +41,5 @@ pub async fn connect(
     );
 
     info!(player = %name, class = ?class, "Player joined");
-    Response::ok(
-        "connect",
-        json!({ "name": name, "class": class }),
-    )
+    Response::ok("connect", json!({ "name": name, "class": class }))
 }

@@ -7,6 +7,8 @@ use crate::state::group::GroupId;
 
 pub const DEFAULT_HP: i32 = 100;
 pub const DEFAULT_ATTACK: i32 = 10;
+/// Maximum number of items a player may carry at once.
+pub const MAX_INVENTORY: usize = 16;
 
 #[derive(Clone, Default)]
 pub struct QuestProgress {
@@ -95,7 +97,11 @@ impl Player {
     }
 
     pub fn shield_reduction(&self) -> i32 {
-        if self.has_shield() { 2 } else { 0 }
+        if self.has_shield() {
+            2
+        } else {
+            0
+        }
     }
 
     fn weapon_bonus(&self) -> i32 {

@@ -19,7 +19,10 @@ impl Session {
         for line in lines {
             match super::super::protocol::parse_line(&line) {
                 Ok(resp) => handle::handle(self, resp),
-                Err(err) => self.app.logs.push(format!("[Client] Bad event line: {}", err)),
+                Err(err) => self
+                    .app
+                    .logs
+                    .push(format!("[Client] Bad event line: {}", err)),
             }
         }
         Ok(())

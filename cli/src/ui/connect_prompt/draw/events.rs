@@ -31,7 +31,11 @@ pub fn handle_events(
                     return Ok(true);
                 }
                 KeyCode::Tab => {
-                    *active = if *active == Field::Name { Field::Class } else { Field::Name };
+                    *active = if *active == Field::Name {
+                        Field::Class
+                    } else {
+                        Field::Name
+                    };
                 }
                 KeyCode::Backspace => {
                     match active {

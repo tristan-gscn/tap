@@ -1,11 +1,23 @@
-use ratatui::{layout::{Constraint, Direction, Layout, Rect}, style::{Modifier, Style}, text::{Line, Span, Text}, widgets::{Block, Borders, Paragraph, Wrap}, Frame};
 use crate::app::App;
+use ratatui::{
+    layout::{Constraint, Direction, Layout, Rect},
+    style::{Modifier, Style},
+    text::{Line, Span, Text},
+    widgets::{Block, Borders, Paragraph, Wrap},
+    Frame,
+};
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
-    let sections = Layout::default().direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)]).split(area);
+    let sections = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)])
+        .split(area);
     let online = Paragraph::new(app.social.online_players.join("\n"))
-        .block(Block::default().borders(Borders::ALL).title("ONLINE PLAYERS"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("ONLINE PLAYERS"),
+        )
         .wrap(Wrap { trim: true });
     let group_id = app
         .social
@@ -32,7 +44,12 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
         app.social
             .group_invites
             .iter()
-            .map(|i| Line::from(format!("from {} (leader {}, id {})", i.from, i.leader, i.group_id)))
+            .map(|i| {
+                Line::from(format!(
+                    "from {} (leader {}, id {})",
+                    i.from, i.leader, i.group_id
+                ))
+            })
             .collect()
     };
     let mut lines = vec![
@@ -45,7 +62,10 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
             Span::raw(leader),
         ]),
         Line::from(""),
-        Line::from(Span::styled("Members:", Style::default().add_modifier(Modifier::BOLD))),
+        Line::from(Span::styled(
+            "Members:",
+            Style::default().add_modifier(Modifier::BOLD),
+        )),
     ];
     lines.extend(members);
     lines.push(Line::from(""));
@@ -55,7 +75,11 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     )));
     lines.extend(invites);
     let group_text = Text::from(lines);
-    let group = Paragraph::new(group_text).block(Block::default().borders(Borders::ALL).title("GROUP MANAGEMENT"));
+    let group = Paragraph::new(group_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("GROUP MANAGEMENT"),
+    );
     frame.render_widget(online, sections[0]);
     frame.render_widget(group, sections[1]);
 }

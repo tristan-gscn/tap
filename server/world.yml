@@ -1,26 +1,111 @@
+# =============================================================================
+# The Answer Protocol — World Data
+#
+# Map layout (10 rooms):
+#
+#                 garden
+#                   |
+#   start ──────── market ──────── tavern
+#     │              │
+#   smithy ──────── gate ──────── entrance ── hall ── vault ── crypt
+#
+#   Loop:    start → market → gate → smithy → start
+#   Branches: garden (off start), tavern (off market),
+#             and the whole dungeon chain (off gate, east).
+#
+# NPC roles (3 distinct, as required by the subject):
+#   - dialogue   : barkeep, blacksmith         (peaceful, flavour text)
+#   - quest-giver: captain, merchant           (peaceful, hand out quests)
+#   - enemy      : skeleton_* (hostile, killable in the dungeon)
+#
+# `hostile: false` makes an NPC reject ATTACK with 405 NPC_NOT_HOSTILE.
+# =============================================================================
+
 world:
   locations:
     start:
+      name: "Village Square"
+      description: "A sunlit cobblestone square. A stone fountain trickles at its centre, and roads branch off in every direction. This is the safest spot for miles."
+      exits:
+        north: "garden"
+        east: "market"
+        south: "smithy"
+      spawns:
+        - npc_type: "captain"
+          count: 1
+
+    garden:
+      name: "Herb Garden"
+      description: "A walled garden hemmed by tall hedges. Rows of fragrant herbs sway between flagstone paths."
+      exits:
+        south: "start"
+      items:
+        - "herbs"
+
+    market:
+      name: "Market Row"
+      description: "A bustling row of timber stalls. Traders hawk bread, cloth, and trinkets over the clatter of carts."
+      exits:
+        west: "start"
+        east: "tavern"
+        south: "gate"
+      spawns:
+        - npc_type: "merchant"
+          count: 1
+      items:
+        - "herbs"
+        - "bread"
+
+    tavern:
+      name: "The Salty Mug"
+      description: "A low-beamed tavern thick with hearth-smoke and laughter. A barkeep polishes mugs behind the counter."
+      exits:
+        west: "market"
+      spawns:
+        - npc_type: "barkeep"
+          count: 1
+      items:
+        - "ale"
+
+    smithy:
+      name: "Ember Forge"
+      description: "A blacksmith's yard ringing with hammer-blows. A wheel of spare iron leans against stacked planks."
+      exits:
+        north: "start"
+        east: "gate"
+      spawns:
+        - npc_type: "blacksmith"
+          count: 1
+      items:
+        - "sword"
+        - "shield"
+
+    gate:
+      name: "The Old Gate"
+      description: "A crumbling stone arch marks the edge of the village. Beyond it, a black stairway descends into the dungeon."
+      exits:
+        north: "market"
+        west: "smithy"
+        east: "entrance"
+
+    entrance:
       name: "Dungeon Entrance"
       description: "A torch-lit antechamber. Damp stone walls echo with distant skittering."
-      kind: "dungeon"
       exits:
+        west: "gate"
         north: "hall"
       spawns:
         - npc_type: "skeleton_warrior"
           count: 1
       items:
         - "torch"
-        - "sword"
-        - "shield"
         - "dagger"
 
     hall:
       name: "Pillared Hall"
       description: "A long hall lined with cracked pillars. Bones litter the floor."
-      kind: "dungeon"
       exits:
-        south: "start"
+        south: "entrance"
         east: "vault"
       spawns:
         - npc_type: "skeleton_rogue"
@@ -28,80 +113,137 @@ world:
       items:
         - "bone_dust"
         - "axe"
-        - "bow"
 
     vault:
       name: "Forgotten Vault"
-      description: "A small vault. A heavy iron chest squats in the center."
-      kind: "dungeon"
+      description: "A small vault. A heavy iron chest squats in the centre beneath a ribbed ceiling."
       exits:
         west: "hall"
+        south: "crypt"
       spawns:
         - npc_type: "skeleton_mage"
           count: 1
       items:
         - "ancient_coin"
-        - "wand"
         - "staff"
-        - "crossbow"
+
+    crypt:
+      name: "Sealed Crypt"
+      description: "A dead-end crypt sealed for centuries. A single rogue skeleton guards a dusty wand."
+      exits:
+        north: "vault"
+      spawns:
+        - npc_type: "skeleton_rogue"
+          count: 1
+      items:
+        - "wand"
 
   items:
-    torch:
-      name: "Burning Torch"
-      description: "A pitch-soaked torch, still alight."
+    herbs:
+      name: "Healing Herbs"
+      obtainable: true
+
+    bread:
+      name: "Loaf of Bread"
+      obtainable: true
+
+    ale:
+      name: "Frothy Ale"
       obtainable: true
 
     sword:
       name: "Iron Sword"
-      description: "A simple blade, but it bites."
       obtainable: true
 
     shield:
       name: "Wooden Shield"
-      description: "A battered shield, still sturdy."
       obtainable: true
 
     dagger:
       name: "Rusted Dagger"
-      description: "A short blade with a wicked point."
       obtainable: true
 
     axe:
       name: "Chipped Axe"
-      description: "A heavy axe, dulled by time."
-      obtainable: true
-
-    bow:
-      name: "Hunter's Bow"
-      description: "A bent bow with a frayed string."
-      obtainable: true
-
-    crossbow:
-      name: "Old Crossbow"
-      description: "A compact crossbow with worn limbs."
-      obtainable: true
-
-    wand:
-      name: "Ashen Wand"
-      description: "A thin wand, warm to the touch."
       obtainable: true
 
     staff:
       name: "Ember Staff"
-      description: "A tall staff capped with a faintly glowing crystal."
+      obtainable: true
+
+    wand:
+      name: "Ashen Wand"
+      obtainable: true
+
+    torch:
+      name: "Burning Torch"
       obtainable: true
 
     bone_dust:
       name: "Bone Dust"
-      description: "A handful of powdered bone. Useful for alchemy."
       obtainable: true
 
     ancient_coin:
       name: "Ancient Coin"
-      description: "A tarnished coin from a forgotten realm."
       obtainable: true
 
   npcs:
+    # -- quest-givers (peaceful) ---------------------------------------------
+    captain:
+      name: "Captain Aldric"
+      description: "The grizzled captain of the village watch, scarred and stern."
+      model: "warrior"
+      hostile: false
+      dialogue:
+        - "The dungeon past the gate crawls with the restless dead."
+        - "Thin out the rogues in the hall and I'll see you rewarded."
+      stats:
+        hp: 40
+        attack: 0
+      quests:
+        - "clear_hall"
+        - "silence_mage"
+
+    merchant:
+      name: "Merchant Bo"
+      description: "A round, cheerful trader with an eye for a bargain."
+      model: "rogue"
+      hostile: false
+      dialogue:
+        - "Welcome, welcome! Finest wares this side of the gate."
+        - "Bring me a couple of healing herbs and I'll make it worth your while."
+      stats:
+        hp: 20
+        attack: 0
+      quests:
+        - "gather_herbs"
+
+    # -- dialogue NPCs (peaceful) --------------------------------------------
+    barkeep:
+      name: "Barkeep Mira"
+      description: "A sharp-tongued barkeep who hears every rumour in the realm."
+      model: "mage"
+      hostile: false
+      dialogue:
+        - "Sit anywhere, traveller. First mug's on the house."
+        - "They say the mage in the vault never truly died."
+      stats:
+        hp: 20
+        attack: 0
+
+    blacksmith:
+      name: "Blacksmith Goran"
+      description: "A broad-shouldered smith, soot-streaked and quietly proud of his work."
+      model: "warrior"
+      hostile: false
+      dialogue:
+        - "Take a blade from the rack if you mean to fight."
+        - "Iron's no good to you unequipped — wield it."
+      stats:
+        hp: 40
+        attack: 0
+
+    # -- enemies (hostile) ----------------------------------------------------
     skeleton_warrior:
       name: "Skeleton Warrior"
       description: "An armored skeleton clutching a rusted axe."
@@ -111,8 +253,6 @@ world:
       stats:
         hp: 18
         attack: 4
-      quests:
-        - "clear_hall"
 
     skeleton_rogue:
       name: "Skeleton Rogue"
@@ -133,13 +273,11 @@ world:
       stats:
         hp: 14
         attack: 6
-      quests:
-        - "vault_clear"
 
   quests:
     clear_hall:
       name: "Clear the Hall"
-      description: "Destroy the rogue skeletons haunting the pillared hall."
+      description: "Destroy the two rogue skeletons haunting the pillared hall."
       objective:
         kind: kill
         target: skeleton_rogue
@@ -147,12 +285,22 @@ world:
       reward:
         xp: 100
 
-    vault_clear:
+    silence_mage:
       name: "Silence the Mage"
-      description: "Bring the skeleton mage to its final rest."
+      description: "Bring the skeleton mage in the vault to its final rest."
       objective:
         kind: kill
         target: skeleton_mage
         count: 1
       reward:
         xp: 150
+
+    gather_herbs:
+      name: "Gather Herbs"
+      description: "Collect two bundles of healing herbs for Merchant Bo."
+      objective:
+        kind: collect
+        target: herbs
+        count: 2
+      reward:
+        xp: 60

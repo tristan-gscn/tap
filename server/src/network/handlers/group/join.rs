@@ -22,10 +22,7 @@ pub fn join(state: &mut GameState, name: &str, leader: String) -> Response {
     state.broadcast_group(
         gid,
         None,
-        Response::ok(
-            "event",
-            json!({ "event": "group_join", "name": name }),
-        ),
+        Response::ok("event", json!({ "event": "group_join", "name": name })),
     );
 
     info!(player = %name, group = gid, "Group join");

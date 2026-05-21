@@ -14,6 +14,10 @@ pub struct IsoTime;
 impl FormatTime for IsoTime {
     /// Formats the current time in RFC3339 format with millisecond precision.
     fn format_time(&self, w: &mut Writer<'_>) -> std::fmt::Result {
-        write!(w, "{}", Local::now().to_rfc3339_opts(SecondsFormat::Millis, true))
+        write!(
+            w,
+            "{}",
+            Local::now().to_rfc3339_opts(SecondsFormat::Millis, true)
+        )
     }
 }

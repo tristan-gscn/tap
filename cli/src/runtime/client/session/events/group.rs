@@ -24,10 +24,10 @@ pub fn handle_group(session: &mut Session, ev: &str, data: &Value) -> bool {
                     from: from.to_string(),
                 });
             }
-            session
-                .app
-                .logs
-                .push(format!("! group invite from {} (leader {}, id {})", from, leader, gid));
+            session.app.logs.push(format!(
+                "! group invite from {} (leader {}, id {})",
+                from, leader, gid
+            ));
             true
         }
         "group_join" if !name.is_empty() => {
@@ -36,11 +36,19 @@ pub fn handle_group(session: &mut Session, ev: &str, data: &Value) -> bool {
             }
             let leader = session.app.social.group_leader.clone();
             if !leader.is_empty()
-                && !session.app.social.group_members.iter().any(|m| m == &leader)
+                && !session
+                    .app
+                    .social
+                    .group_members
+                    .iter()
+                    .any(|m| m == &leader)
             {
                 session.app.social.group_members.insert(0, leader);
             }
-            session.app.logs.push(format!("! {} joined the group", name));
+            session
+                .app
+                .logs
+                .push(format!("! {} joined the group", name));
             true
         }
         "group_leave" if !name.is_empty() => {

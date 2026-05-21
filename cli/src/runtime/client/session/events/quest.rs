@@ -9,7 +9,9 @@ pub fn handle_quest(session: &mut Session, ev: &str, data: &Value) -> bool {
     }
     match ev {
         "quest_accepted" => {
-            session.app.quest_upsert(quest, |e| e.status = "active".to_string());
+            session
+                .app
+                .quest_upsert(quest, |e| e.status = "active".to_string());
             session
                 .app
                 .logs
@@ -38,10 +40,10 @@ pub fn handle_quest(session: &mut Session, ev: &str, data: &Value) -> bool {
                 .app
                 .quest_upsert(quest, |e| e.status = "completed".to_string());
             session.app.status.xp = total;
-            session
-                .app
-                .logs
-                .push(format!("\u{2726} quest completed: {} (+{} xp)", quest, reward));
+            session.app.logs.push(format!(
+                "\u{2726} quest completed: {} (+{} xp)",
+                quest, reward
+            ));
             true
         }
         _ => false,

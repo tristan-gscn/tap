@@ -82,7 +82,10 @@ impl App {
                 .to_string();
             let p = q.get("progress").and_then(|v| v.as_i64()).unwrap_or(0);
             let r = q.get("required").and_then(|v| v.as_i64()).unwrap_or(0);
-            let done = q.get("completed").and_then(|v| v.as_bool()).unwrap_or(false);
+            let done = q
+                .get("completed")
+                .and_then(|v| v.as_bool())
+                .unwrap_or(false);
             self.quest_upsert(id, |e| {
                 e.name = name;
                 e.progress = p;

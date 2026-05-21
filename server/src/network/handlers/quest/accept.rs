@@ -22,10 +22,7 @@ pub fn accept(state: &mut GameState, name: &str, id: String) -> Response {
 
     state.send_to(
         name,
-        Response::ok(
-            "event",
-            json!({ "event": "quest_accepted", "quest": qid }),
-        ),
+        Response::ok("event", json!({ "event": "quest_accepted", "quest": qid })),
     );
 
     info!(player = %name, quest = %qid, "Quest accepted");

@@ -14,14 +14,17 @@ pub fn process_response(session: &mut Session, first_word: &str, response: ApiRe
         },
         "INVENTORY" => match parse_inventory(response) {
             Ok(inv) => session.apply_inventory_to_status(inv),
-            Err(err) => session
-                .app
-                .logs
-                .push(format!("[Client] Error updating inventory after INVENTORY: {}", err)),
+            Err(err) => session.app.logs.push(format!(
+                "[Client] Error updating inventory after INVENTORY: {}",
+                err
+            )),
         },
         "MOVE" | "GO" => {
             if let ApiResponse::Ok { data, .. } = &response {
-                let dir = data.get("direction").and_then(|v| v.as_str()).unwrap_or("?");
+                let dir = data
+                    .get("direction")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("?");
                 let to = data.get("to").and_then(|v| v.as_str()).unwrap_or("?");
                 session
                     .app
@@ -35,6 +38,27 @@ pub fn process_response(session: &mut Session, first_word: &str, response: ApiRe
         "ATTACK" => {
             if let ApiResponse::Ok { data, .. } = &response {
                 apply_attack(session, data);
+            }
+        }
+        "TALK" => {
+            if let ApiResponse::Ok { data, .. } = &response {
+                apply_talk(session, data);
+            }
+        }
+        "STATUS" => {
+            if let ApiResponse::Ok { data, .. } = &response {
+                apply_status(session, data);
+            }
+        }
+        "TAKE" | "DROP" => {
+            if let ApiResponse::Ok { .. } = response {
+                let _ = session.refresh_look();
+                let _ = session.refresh_inventory();
+            }
+        }
+        "EQUIP" | "UNEQUIP" => {
+            if let ApiResponse::Ok { .. } = response {
+                let _ = session.refresh_inventory();
             }
         }
         "QUEST" | "QUESTS" => {
@@ -62,8 +86,14 @@ fn as_hp(v: Option<&Value>) -> Option<u16> {
 
 fn apply_attack(session: &mut Session, data: &Value) {
     let target = data.get("target").and_then(|v| v.as_str()).unwrap_or("?");
-    let defeated = data.get("defeated").and_then(|v| v.as_bool()).unwrap_or(false);
-    let killed = data.get("killed").and_then(|v| v.as_bool()).unwrap_or(false);
+    let defeated = data
+        .get("defeated")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
+    let killed = data
+        .get("killed")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
 
     if defeated {
         session.app.status.hp_current = session.app.status.hp_max;
@@ -79,6 +109,60 @@ fn apply_attack(session: &mut Session, data: &Value) {
     } else if let Some(npc_hp) = data.get("npc_hp").and_then(|v| v.as_i64()) {
         session.app.status.combat_status = format!("Fighting {} ({} hp)", target, npc_hp);
     }
+}
+
+fn apply_talk(session: &mut Session, data: &Value) {
+    let speaker = data
+        .get("name")
+        .and_then(|v| v.as_str())
+        .or_else(|| data.get("npc").and_then(|v| v.as_str()))
+        .unwrap_or("NPC");
+    match data.get("dialogue") {
+        Some(Value::Array(lines)) if !lines.is_empty() => {
+            for line in lines {
+                if let Some(text) = line.as_str() {
+                    session
+                        .app
+                        .logs
+                        .push(format!("\u{1F4AC} {}: {}", speaker, text));
+                }
+            }
+        }
+        Some(Value::String(text)) => {
+            session
+                .app
+                .logs
+                .push(format!("\u{1F4AC} {}: {}", speaker, text));
+        }
+        _ => {
+            session
+                .app
+                .logs
+                .push(format!("\u{1F4AC} {} has nothing to say.", speaker));
+        }
+    }
+}
+
+fn apply_status(session: &mut Session, data: &Value) {
+    if let Some(hp) = as_hp(data.get("hp")) {
+        session.app.status.hp_current = hp;
+    }
+    if let Some(max) = as_hp(data.get("max_hp")) {
+        session.app.status.hp_max = max;
+    }
+    if let Some(xp) = data.get("xp").and_then(|v| v.as_i64()) {
+        session.app.status.xp = xp;
+    }
+    if let Some(state) = data.get("status").and_then(|v| v.as_str()) {
+        session.app.status.combat_status = state.to_string();
+    }
+    let hp = session.app.status.hp_current;
+    let max = session.app.status.hp_max;
+    let state = session.app.status.combat_status.clone();
+    session
+        .app
+        .logs
+        .push(format!("\u{2665} status: {}/{} hp — {}", hp, max, state));
 }
 
 fn apply_quest(session: &mut Session, data: &Value) {
@@ -115,10 +199,7 @@ fn apply_group(session: &mut Session, data: &Value) {
             session.app.social.group_members = vec![me];
             session.app.social.group_invites.clear();
             if let Some(gid) = data.get("group").and_then(|v| v.as_u64()) {
-                session
-                    .app
-                    .logs
-                    .push(format!("! created group {}", gid));
+                session.app.logs.push(format!("! created group {}", gid));
             }
         }
         "join" => {
@@ -139,10 +220,7 @@ fn apply_group(session: &mut Session, data: &Value) {
                     .social
                     .group_invites
                     .retain(|i| i.group_id != id);
-                session
-                    .app
-                    .logs
-                    .push(format!("! joined group {}", id));
+                session.app.logs.push(format!("! joined group {}", id));
             }
             let leader = session.app.social.group_leader.clone();
             if session.app.social.group_members.is_empty() {
@@ -153,7 +231,12 @@ fn apply_group(session: &mut Session, data: &Value) {
                 }
             } else {
                 if !leader.is_empty()
-                    && !session.app.social.group_members.iter().any(|m| m == &leader)
+                    && !session
+                        .app
+                        .social
+                        .group_members
+                        .iter()
+                        .any(|m| m == &leader)
                 {
                     session.app.social.group_members.insert(0, leader);
                 }

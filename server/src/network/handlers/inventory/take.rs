@@ -40,6 +40,11 @@ pub async fn take(query: String, addr: &str, state: Arc<RwLock<GameState>>) -> R
         return Response::error(404, "ITEM_NOT_FOUND");
     }
 
+    // Cap inventory size; the item stays in the room when the bag is full.
+    if state.players[&name].inventory.len() >= crate::state::player::MAX_INVENTORY {
+        return Response::error(407, "INVENTORY_FULL");
+    }
+
     state.world.remove_item(&room, &item_id);
     let touched = state
         .players

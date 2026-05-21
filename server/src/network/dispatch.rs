@@ -32,8 +32,6 @@ pub async fn dispatch(
         Command::Talk { target } => world::talk(target, addr, state).await,
         Command::Quest(action) => quest::quest(action, addr, state).await,
         Command::Quit => session::quit(addr, state).await,
-        Command::Unknown(raw) => {
-            Response::error(404, format!("Unknown command: {}", raw))
-        }
+        Command::Unknown(raw) => Response::error(404, format!("Unknown command: {}", raw)),
     }
 }

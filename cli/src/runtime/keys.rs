@@ -1,6 +1,6 @@
-use crossterm::event::{KeyCode, KeyEvent};
-use crate::app::Tab;
 use super::client::Session;
+use crate::app::Tab;
+use crossterm::event::{KeyCode, KeyEvent};
 
 /// Handles a keyboard key press.
 /// Returns true if the application should exit.

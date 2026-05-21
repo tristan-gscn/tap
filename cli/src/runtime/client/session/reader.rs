@@ -40,9 +40,7 @@ pub fn read_line_blocking(reader: &mut TcpStream, buf: &mut Vec<u8>) -> io::Resu
         match reader.read(&mut tmp) {
             Ok(0) => sleep(Duration::from_millis(10)),
             Ok(n) => buf.extend_from_slice(&tmp[..n]),
-            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
-                sleep(Duration::from_millis(10))
-            }
+            Err(e) if e.kind() == io::ErrorKind::WouldBlock => sleep(Duration::from_millis(10)),
             Err(e) => return Err(e),
         }
     }

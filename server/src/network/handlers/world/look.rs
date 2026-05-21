@@ -55,13 +55,17 @@ pub async fn look(addr: &str, state: Arc<RwLock<GameState>>) -> Response {
         .iter()
         .map(|n| {
             let cfg_npc = cfg.world.npcs.get(&n.npc_type);
-            let display_name = cfg_npc.map(|c| c.name.as_str()).unwrap_or(n.npc_type.as_str());
+            let display_name = cfg_npc
+                .map(|c| c.name.as_str())
+                .unwrap_or(n.npc_type.as_str());
             let model = cfg_npc.and_then(|c| c.model.clone());
+            let hostile = cfg_npc.map(|c| c.hostile).unwrap_or(true);
             json!({
                 "id": n.id,
                 "type": n.npc_type,
                 "name": display_name,
                 "model": model,
+                "hostile": hostile,
                 "hp": n.hp,
                 "max_hp": n.max_hp,
             })

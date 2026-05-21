@@ -24,7 +24,10 @@ impl Response {
 
     /// Creates an error response with a status code and message.
     pub fn error(code: u16, message: impl Into<String>) -> Self {
-        Response::Error { code, message: message.into() }
+        Response::Error {
+            code,
+            message: message.into(),
+        }
     }
 
     /// Serializes the response to a JSON string followed by a newline.

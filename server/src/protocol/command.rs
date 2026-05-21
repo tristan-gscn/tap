@@ -65,11 +65,9 @@ impl Command {
             "INVENTORY" => Ok(Command::Inventory),
             "QUIT" => Ok(Command::Quit),
 
-            "TAKE" => require(rest, "TAKE requires an item")
-                .map(|item| Command::Take { item }),
+            "TAKE" => require(rest, "TAKE requires an item").map(|item| Command::Take { item }),
 
-            "DROP" => require(rest, "DROP requires an item")
-                .map(|item| Command::Drop { item }),
+            "DROP" => require(rest, "DROP requires an item").map(|item| Command::Drop { item }),
 
             "EQUIP" => parse_equip(rest),
             "UNEQUIP" => parse_unequip(rest),
@@ -85,11 +83,13 @@ impl Command {
                 )),
             },
 
-            "ATTACK" => require(rest, "ATTACK requires a target")
-                .map(|target| Command::Attack { target }),
+            "ATTACK" => {
+                require(rest, "ATTACK requires a target").map(|target| Command::Attack { target })
+            }
 
-            "TALK" => require(rest, "TALK requires a target")
-                .map(|target| Command::Talk { target }),
+            "TALK" => {
+                require(rest, "TALK requires a target").map(|target| Command::Talk { target })
+            }
 
             "QUEST" => parse_quest(rest),
             "QUESTS" => Ok(Command::Quest(QuestAction::Summary)),
@@ -106,7 +106,10 @@ fn parse_connect(rest: &str) -> Result<Command, Response> {
     if name.is_empty() {
         return Err(Response::error(400, "CONNECT requires a name"));
     }
-    let class = p.next().map(|s| s.trim().to_string()).filter(|s| !s.is_empty());
+    let class = p
+        .next()
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty());
     Ok(Command::Connect { name, class })
 }
 
@@ -190,12 +193,7 @@ fn parse_quest(rest: &str) -> Result<Command, Response> {
         "COMPLETE" => QuestAction::Complete {
             id: require(arg, "QUEST COMPLETE requires a quest id")?,
         },
-        "" => {
-            return Err(Response::error(
-                400,
-                "QUEST requires an npc name",
-            ))
-        }
+        "" => return Err(Response::error(400, "QUEST requires an npc name")),
         _ => QuestAction::Request {
             npc: rest.to_string(),
         },

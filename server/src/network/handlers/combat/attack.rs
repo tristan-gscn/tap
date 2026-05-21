@@ -26,6 +26,27 @@ pub async fn attack(query: String, addr: &str, state: Arc<RwLock<GameState>>) ->
         None => return Response::error(404, "NPC_NOT_FOUND"),
     };
 
+    // The NPC must actually be standing in the room before we judge hostility,
+    // otherwise an absent peaceful NPC would wrongly report 405 instead of 404.
+    let present = state
+        .world
+        .npcs_in(&room)
+        .iter()
+        .any(|n| n.npc_type == npc_type);
+    if !present {
+        return Response::error(404, "NPC_NOT_FOUND");
+    }
+
+    let hostile = crate::config::get()
+        .world
+        .npcs
+        .get(&npc_type)
+        .map(|n| n.hostile)
+        .unwrap_or(true);
+    if !hostile {
+        return Response::error(405, "NPC_NOT_HOSTILE");
+    }
+
     match state.world.attack_npc(&room, &npc_type, power) {
         AttackOutcome::NoTarget => Response::error(404, "NPC_NOT_FOUND"),
 

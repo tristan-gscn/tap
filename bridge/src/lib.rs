@@ -5,7 +5,7 @@ use tokio::net::TcpListener;
 mod server;
 
 /// Starts the bridge server.
-/// 
+///
 /// Reads `TAP_BRIDGE_ADDR` and `TAP_SERVER_ADDR` environment variables
 /// to determine the listening and destination addresses.
 pub async fn run() -> Result<(), Box<dyn std::error::Error>> {

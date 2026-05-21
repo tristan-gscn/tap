@@ -1,5 +1,5 @@
+use super::types::{ApiResponse, InventoryResponse, LookResponse};
 use std::io;
-use super::types::{ApiResponse, LookResponse, InventoryResponse};
 
 pub fn ensure_ok(response: &ApiResponse, expected_kind: &str) -> io::Result<()> {
     match response {
@@ -8,10 +8,10 @@ pub fn ensure_ok(response: &ApiResponse, expected_kind: &str) -> io::Result<()> 
             io::ErrorKind::InvalidData,
             format!("unexpected response type: {}", kind),
         )),
-        ApiResponse::Error { code, message } => Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!("server error {}: {}", code, message),
-        )),
+        ApiResponse::Error { code, message } => Err(io::Error::other(format!(
+            "server error {}: {}",
+            code, message
+        ))),
     }
 }
 
@@ -23,10 +23,10 @@ pub fn parse_look(response: ApiResponse) -> io::Result<LookResponse> {
             io::ErrorKind::InvalidData,
             format!("unexpected response type: {}", kind),
         )),
-        ApiResponse::Error { code, message } => Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!("server error {}: {}", code, message),
-        )),
+        ApiResponse::Error { code, message } => Err(io::Error::other(format!(
+            "server error {}: {}",
+            code, message
+        ))),
     }
 }
 
@@ -38,9 +38,9 @@ pub fn parse_inventory(response: ApiResponse) -> io::Result<InventoryResponse> {
             io::ErrorKind::InvalidData,
             format!("unexpected response type: {}", kind),
         )),
-        ApiResponse::Error { code, message } => Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!("server error {}: {}", code, message),
-        )),
+        ApiResponse::Error { code, message } => Err(io::Error::other(format!(
+            "server error {}: {}",
+            code, message
+        ))),
     }
 }

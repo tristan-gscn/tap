@@ -21,19 +21,13 @@ pub async fn disconnect(addr: &str, state: Arc<RwLock<GameState>>) {
     match state.leave_group(&name) {
         GroupLeave::NotInGroup => {}
         GroupLeave::Left { remaining, .. } => {
-            let msg = Response::ok(
-                "event",
-                json!({ "event": "group_leave", "name": name }),
-            );
+            let msg = Response::ok("event", json!({ "event": "group_leave", "name": name }));
             for m in &remaining {
                 state.send_to(m, msg.clone());
             }
         }
         GroupLeave::Disbanded { members, .. } => {
-            let msg = Response::ok(
-                "event",
-                json!({ "event": "group_disband", "by": name }),
-            );
+            let msg = Response::ok("event", json!({ "event": "group_disband", "by": name }));
             for m in &members {
                 if m.as_str() != name {
                     state.send_to(m, msg.clone());
@@ -47,10 +41,7 @@ pub async fn disconnect(addr: &str, state: Arc<RwLock<GameState>>) {
     state.broadcast_room(
         &room,
         None,
-        Response::ok(
-            "event",
-            json!({ "event": "presence_leave", "name": name }),
-        ),
+        Response::ok("event", json!({ "event": "presence_leave", "name": name })),
     );
 
     info!(player = %name, "Player disconnected");
