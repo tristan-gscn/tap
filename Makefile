@@ -32,6 +32,7 @@ run-bridge: ## Run the WebSocket<->TCP bridge the GUI needs (127.0.0.1:7878)
 .PHONY: run-client-gui
 run-client-gui: ## Run the GUI dev server (needs run-server + run-bridge)
 	@echo "NOTE: the GUI needs the server (make run-server) and bridge (make run-bridge) running."
+	cd gui && npm install
 	cd gui && npm run dev
 
 .PHONY: lint
@@ -40,9 +41,10 @@ lint: ## Check formatting + clippy on all Rust crates
 		echo ">> fmt check ($$c)"; (cd $$c && cargo fmt --all -- --check) || exit 1; \
 		echo ">> clippy ($$c)"; (cd $$c && cargo clippy --all-targets -- -D warnings) || exit 1; \
 	done
-	@cd gui && npm run lint
+	cd gui && npm run lint
 
 .PHONY: clean
 clean: ## Remove all build artifacts (Rust target/ + GUI dist + node_modules)
 	@for c in $(RUST_CRATES); do echo ">> clean ($$c)"; (cd $$c && cargo clean); done
-	rm -rf gui/dist gui/node_modules
+	@echo ">> clean (gui)"
+	rm -rf gui/dist gui/dist-ssr gui/node_modules gui/.vite gui/*.local
