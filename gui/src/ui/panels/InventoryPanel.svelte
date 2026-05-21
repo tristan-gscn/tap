@@ -1,7 +1,6 @@
 <script lang="ts">
     import { game } from '../../state/game.svelte';
     import { resolveItemIcon } from '../../registries/itemIcons';
-    import type { ItemDetail } from '../../state/game.svelte';
 
     const INVENTORY_SLOTS = 16;
 
@@ -9,117 +8,119 @@
         Array.from({ length: INVENTORY_SLOTS }, (_, i) => game.inventoryDetail[i] ?? null)
     );
 
-    const rightItem = $derived(
-        game.inventoryDetail.find((i) => i.id === game.equippedRight) ?? null
-    );
-    const leftItem = $derived(
-        game.inventoryDetail.find((i) => i.id === game.equippedLeft) ?? null
-    );
-    const RightIcon = $derived(resolveItemIcon(rightItem?.id));
-    const LeftIcon = $derived(resolveItemIcon(leftItem?.id));
+    const equippedLeft = $derived(game.equippedLeft);
+    const equippedRight = $derived(game.equippedRight);
+    const displayLeft = $derived(equippedLeft && equippedLeft === equippedRight ? null : equippedLeft);
+    const displayRight = $derived(equippedRight);
+
+    async function equipLeft(itemId: string) {
+        if (game.equippedRight === itemId) {
+            await game.unequip('right');
+        }
+        await game.equip('left', itemId);
+    }
+
+    async function equipRight(itemId: string) {
+        if (game.equippedLeft === itemId) {
+            await game.unequip('left');
+        }
+        await game.equip('right', itemId);
+    }
+
+    async function unequipLeft() {
+        await game.unequip('left');
+    }
+
+    async function unequipRight() {
+        await game.unequip('right');
+    }
 </script>
 
 <div class="tap-panel">
-    <div class="tap-panel-title">
+    <div class="mb-2 flex items-center justify-between text-[0.82rem] font-medium text-white/90">
         <span>Inventory</span>
         <span class="text-[11px] font-normal text-white/55">{game.inventoryDetail.length}/{INVENTORY_SLOTS}</span>
     </div>
 
-    <div class="mb-2 grid grid-cols-2 gap-2">
-        <div class="rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-[11px]">
-            <div class="mb-1 text-[10px] uppercase tracking-[0.2em] text-white/55">Right hand</div>
-            {#if rightItem}
-                <div class="flex items-center justify-between gap-2">
-                    <span class="inline-flex items-center gap-2">
-                        <RightIcon size={14} class="text-white/85" />
-                        <span>{rightItem.name}</span>
-                    </span>
+    <div class="mb-2 grid grid-cols-2 gap-2 text-[11px]">
+        <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-2 py-1">
+            <span class="text-white/60">Left</span>
+            <div class="flex items-center gap-1 text-white/90">
+                {#if displayLeft}
+                    {@const LeftIcon = resolveItemIcon(displayLeft)}
+                    <LeftIcon size={14} class="text-white/85" />
+                    <span class="max-w-[80px] truncate">{displayLeft}</span>
                     <button
-                        type="button"
-                        class="tap-btn px-2 py-0.5 text-[10px]"
-                        onclick={() => game.unequip('right')}
-                    >unequip</button>
-                </div>
-            {:else}
-                <div class="text-white/55">empty</div>
-            {/if}
+                            type="button"
+                            class="ml-1 inline-flex items-center justify-center rounded-md border border-white/20 bg-white/10 px-1.5 py-0.5 text-[10px] text-white transition hover:bg-white/20"
+                            onclick={unequipLeft}
+                    >
+                        ✕
+                    </button>
+                {:else}
+                    <span class="text-white/40">empty</span>
+                {/if}
+            </div>
         </div>
-        <div class="rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-[11px]">
-            <div class="mb-1 text-[10px] uppercase tracking-[0.2em] text-white/55">Left hand</div>
-            {#if leftItem}
-                <div class="flex items-center justify-between gap-2">
-                    <span class="inline-flex items-center gap-2">
-                        <LeftIcon size={14} class="text-white/85" />
-                        <span>{leftItem.name}</span>
-                    </span>
+        <div class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-2 py-1">
+            <span class="text-white/60">Right</span>
+            <div class="flex items-center gap-1 text-white/90">
+                {#if displayRight}
+                    {@const RightIcon = resolveItemIcon(displayRight)}
+                    <RightIcon size={14} class="text-white/85" />
+                    <span class="max-w-[80px] truncate">{displayRight}</span>
                     <button
-                        type="button"
-                        class="tap-btn px-2 py-0.5 text-[10px]"
-                        onclick={() => game.unequip('left')}
-                    >unequip</button>
-                </div>
-            {:else}
-                <div class="text-white/55">empty</div>
-            {/if}
+                            type="button"
+                            class="ml-1 inline-flex items-center justify-center rounded-md border border-white/20 bg-white/10 px-1.5 py-0.5 text-[10px] text-white transition hover:bg-white/20"
+                            onclick={unequipRight}
+                    >
+                        ✕
+                    </button>
+                {:else}
+                    <span class="text-white/40">empty</span>
+                {/if}
+            </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-4 gap-1.5">
+    <div class="grid w-full grid-cols-4 gap-2">
         {#each slots as item, i (i)}
             {@const Icon = resolveItemIcon(item?.id)}
-            <button
-                type="button"
-                class="tap-slot {item ? '' : 'tap-slot-empty'}"
-                onclick={(e) => {
-                    if (!item) return;
-                    if (e.shiftKey) {
-                        game.equip('left', item.id);
-                    } else {
-                        game.equip('right', item.id);
-                    }
-                }}
-                oncontextmenu={(e) => {
-                    if (!item) return;
-                    e.preventDefault();
-                    game.drop(item.id);
-                }}
-                title={item ? `${item.name} (click to equip right, shift-click for left)` : 'empty'}
-                disabled={!item}
+            <div
+                    class={`group relative flex aspect-square w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/85 shadow-[0_1px_0_rgba(255,255,255,0.06)_inset] transition ${item ? 'cursor-pointer hover:border-white/30 hover:bg-white/15' : 'cursor-default opacity-45'}`}
+                    title={item ? item.name : 'empty'}
             >
-                <Icon size={26} strokeWidth={1.6} />
+                <Icon size={30} strokeWidth={1.6} />
                 {#if item}
-                    <span class="tap-tooltip">{item.name}<br /><span class="text-white/65">click: right hand • shift-click: left hand • right-click: drop</span></span>
+                    <div class="pointer-events-none absolute bottom-[calc(100%+6px)] left-1/2 z-20 w-max -translate-x-1/2 rounded-md border border-white/15 bg-[#120e16]/90 px-2 py-1 text-[10px] text-white opacity-0 shadow-[0_8px_20px_rgba(0,0,0,0.4)] transition group-hover:opacity-100">
+                        {item.name}
+                    </div>
+
+                    <div class="absolute inset-0 z-10 grid grid-cols-2 grid-rows-2 gap-1 p-1 rounded-lg bg-[#120e16]/85 opacity-0 backdrop-blur-[2px] transition group-hover:opacity-100">
+                        <button
+                                type="button"
+                                class="cursor-pointer col-span-2 flex h-full w-full items-center justify-center rounded border border-white/15 bg-white/5 text-[9px] text-white shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] transition hover:bg-white/20 active:bg-white/30"
+                                onclick={() => game.drop(item.id)}
+                        >
+                            drop
+                        </button>
+                        <button
+                                type="button"
+                                class="cursor-pointer flex h-full w-full items-center justify-center rounded border border-white/15 bg-white/5 text-[9px] text-white shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] transition hover:bg-white/20 active:bg-white/30"
+                                onclick={() => equipLeft(item.id)}
+                        >
+                            left
+                        </button>
+                        <button
+                                type="button"
+                                class="cursor-pointer flex h-full w-full items-center justify-center rounded border border-white/15 bg-white/5 text-[9px] text-white shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] transition hover:bg-white/20 active:bg-white/30"
+                                onclick={() => equipRight(item.id)}
+                        >
+                            right
+                        </button>
+                    </div>
                 {/if}
-            </button>
+            </div>
         {/each}
     </div>
-
-    <div class="mt-2 flex items-center justify-between text-[10px] text-white/55">
-        <span>Tip: Shift-click equips to left hand.</span>
-        <span>Right-click drops.</span>
-    </div>
-
-    {#if game.itemsDetail.length > 0}
-        <div class="mt-3 border-t border-white/10 pt-2.5">
-            <div class="mb-1.5 text-[11px] text-white/60">On the floor</div>
-            <ul class="space-y-1">
-                {#each game.itemsDetail as item (item.id)}
-                    {@const Icon = resolveItemIcon(item.id)}
-                    <li class="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-[12px]">
-                        <span class="inline-flex items-center gap-2">
-                            <Icon size={14} class="text-white/85" />
-                            <span>{item.name}</span>
-                        </span>
-                        <button
-                            type="button"
-                            class="tap-btn tap-btn-primary px-2 py-0.5 text-[10px]"
-                            onclick={() => game.take(item.id)}
-                        >
-                            take
-                        </button>
-                    </li>
-                {/each}
-            </ul>
-        </div>
-    {/if}
 </div>

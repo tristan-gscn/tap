@@ -317,3 +317,70 @@
     0 1px 0 rgba(255, 255, 255, 0.3) inset,
     0 0 12px rgba(255, 180, 80, 0.4);
 }
+
+.status-diamond {
+  width: 72px;
+  height: 72px;
+  transform: rotate(45deg);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(12, 12, 20, 0.6);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 6px 18px rgba(0, 0, 0, 0.35);
+  position: relative;
+  z-index: 2;
+}
+
+.status-diamond-content {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-45deg) scale(1.27);
+  transform-origin: center;
+  background: #050508;
+}
+
+.status-diamond-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.status-bar-row {
+  margin-left: -36px;
+  padding-left: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.room-zone-banner {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.65),
+    0 0 24px rgba(120, 170, 255, 0.35);
+}
+
+.room-zone-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  margin-bottom: 0.4rem;
+}
+
+.room-zone-divider {
+  width: 140px;
+  height: 2px;
+  margin: 0 auto 0.35rem;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+  box-shadow: 0 0 10px rgba(120, 170, 255, 0.45);
+}
+
+.room-zone-kind {
+  font-size: 0.6rem;
+  opacity: 0.6;
+  letter-spacing: 0.3em;
+}

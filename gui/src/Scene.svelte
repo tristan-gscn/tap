@@ -6,10 +6,12 @@
     import { resolveCharacterModel } from './registries/characterModels';
     import { resolveNpcModel } from './registries/npcModels';
     import { resolveRoom } from './registries/rooms';
+    import { resolveItemProp } from './registries/itemProps';
     import { game } from './state/game.svelte';
     import type { Direction } from './utils/TAPManager';
-    import { npcPosition, otherPlayerPosition } from './utils/positions';
+    import { itemPosition, npcPosition, otherPlayerPosition } from './utils/positions';
     import type { IntersectionEvent } from '@threlte/extras';
+    import GroundItem from './actors/GroundItem.svelte';
 
     interactivity();
 
@@ -70,6 +72,10 @@
         game.move(direction);
     }
 
+    function setCursor(state: 'pointer' | 'default') {
+        document.body.style.cursor = state;
+    }
+
     function handleNpcPointer(
         e: IntersectionEvent<PointerEvent>,
         npcType: string,
@@ -104,8 +110,14 @@
         position={pos}
         rotation={[0, Math.PI, 0]}
         onpointerdown={(e: IntersectionEvent<PointerEvent>) => handleNpcPointer(e, npc.type, npc.id, pos)}
-        onpointerenter={() => (hoveredNpcId = npc.id)}
-        onpointerleave={() => hoveredNpcId === npc.id && (hoveredNpcId = null)}
+        onpointerenter={() => {
+            hoveredNpcId = npc.id;
+            setCursor('pointer');
+        }}
+        onpointerleave={() => {
+            if (hoveredNpcId === npc.id) hoveredNpcId = null;
+            setCursor('default');
+        }}
         oncontextmenu={(e: Event) => e.preventDefault()}
     >
         <NpcComp animation={npcAnimations[npc.id] ?? ActorAnimation.Skeletons_Idle} />
@@ -128,6 +140,25 @@
             </T.Group>
         {/if}
     </T.Group>
+{/each}
+
+{#each game.itemsDetail as item, i (item.id)}
+    {@const url = resolveItemProp(item.id)}
+    {@const pos = itemPosition(item.id, i, game.itemsDetail.length)}
+    {#if url}
+        <T.Group
+            position={pos}
+            rotation={[0, Math.PI, 0]}
+            onpointerenter={() => setCursor('pointer')}
+            onpointerleave={() => setCursor('default')}
+            onpointerdown={(e: IntersectionEvent<PointerEvent>) => {
+                e.stopPropagation();
+                game.take(item.id);
+            }}
+        >
+            <GroundItem url={url} />
+        </T.Group>
+    {/if}
 {/each}
 
 {#each otherPlayers as name (name)}

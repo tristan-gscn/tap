@@ -118,6 +118,7 @@ impl Player {
             || matches!(self.equipped_right.as_deref(), Some(id) if is_shield(id))
     }
 
+    /// Restores HP and moves the player back to the starting room.
     pub fn respawn(&mut self) {
         self.hp = self.max_hp;
         self.room = "start".to_string();
