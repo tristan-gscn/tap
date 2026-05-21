@@ -154,7 +154,7 @@
   color="#2a3b6a"
 />
 
-{#each torchLightMounts as torchMount}
+{#each torchLightMounts as torchMount (torchMount.lightPos.join(','))}
   <T.PointLight
     position={torchMount.lightPos}
     intensity={11.0}
@@ -188,8 +188,8 @@
       {#await chest then chestModel}
         {#await torch then torchModel}
           {#await door then doorModel}
-            {#each tilesX as x}
-              {#each tilesZ as y}
+            {#each tilesX as x (x)}
+              {#each tilesZ as y (y)}
                 <T.Group position={[x * 2, 0, y * 2]}>
                   <T is={floorModel.scene.clone()} />
                 </T.Group>
@@ -209,7 +209,7 @@
               <T.MeshBasicMaterial transparent opacity={0} />
             </T.Mesh>
 
-            {#each tilesX as i}
+            {#each tilesX as i (i)}
               {#if i !== doorXIndex}
                 <T.Group position={[i * 2, 0, WALL_N]}>
                   <T is={wallModel.scene.clone()} />
@@ -223,7 +223,7 @@
               {/if}
             {/each}
 
-            {#each tilesZ as i}
+            {#each tilesZ as i (i)}
               {#if i !== doorZIndex}
                 <T.Group
                   position={[WALL_W, 0, i * 2]}
@@ -277,7 +277,7 @@
               {/if}
             {/each}
 
-            {#each sceneryActors as actor}
+            {#each sceneryActors as actor, i (i)}
               <T.Group
                 position={actor.position}
                 rotation={actor.rotation ?? [0, 0, 0]}

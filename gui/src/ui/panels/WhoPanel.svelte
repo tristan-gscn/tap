@@ -1,5 +1,4 @@
 <script lang="ts">
-    import LiquidGlassPanel from '../LiquidGlassPanel.svelte';
     import { game } from '../../state/game.svelte';
 </script>
 
@@ -11,7 +10,7 @@
         <div class="text-[12px] text-white/55">No one online.</div>
     {:else}
         <ul class="space-y-1">
-            {#each game.onlinePlayers as p}
+            {#each game.onlinePlayers as p (p)}
                 <li class="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-[12px]">
                     <span class={p === game.playerName ? 'font-medium text-white' : 'text-white/80'}>{p}</span>
                 </li>

@@ -13,6 +13,7 @@
     import type { IntersectionEvent } from '@threlte/extras';
     import GroundItem from './actors/GroundItem.svelte';
     import SackItem from './actors/SackItem.svelte';
+    import { SvelteMap } from 'svelte/reactivity';
 
     interactivity();
 
@@ -28,7 +29,7 @@
 
     let hoveredNpcId = $state<number | null>(null);
     let npcAnimations = $state<Record<number, ActorAnimation>>({});
-    const npcTimers = new Map<number, ReturnType<typeof setTimeout>>();
+    const npcTimers = new SvelteMap<number, ReturnType<typeof setTimeout>>();
 
     function randomSpawnAnimation() {
         return Math.random() < 0.5 ? ActorAnimation.Spawn_Air : ActorAnimation.Spawn_Ground;

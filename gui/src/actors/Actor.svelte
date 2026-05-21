@@ -2,6 +2,7 @@
     import { T } from '@threlte/core'
     import { useGltf, useGltfAnimations } from '@threlte/extras'
     import { derived } from 'svelte/store'
+    import type { Object3D, SkinnedMesh } from 'three'
 
     import type { ActorProps } from './ActorProps'
     import Prop from './Prop.svelte'
@@ -72,26 +73,28 @@
     let rightHand = $derived.by(() => {
         const currentGltf = $gltf
         if (!currentGltf) return undefined
-        let found: any
+        let found: Object3D | undefined
         currentGltf.scene.traverse((child) => {
             if (child.name.endsWith('_ArmRight')) {
                 found = child
             }
         })
-        if (!found || !found.skeleton) return undefined
-        return found.skeleton.bones.find((bone) => bone.name == "handr")
+        const skinned = found as SkinnedMesh | undefined
+        if (!skinned || !skinned.skeleton) return undefined
+        return skinned.skeleton.bones.find((bone) => bone.name == "handr")
     })
 
     let leftHand = $derived.by(() => {
         const currentGltf = $gltf
         if (!currentGltf) return undefined
-        let found: any
+        let found: Object3D | undefined
         currentGltf.scene.traverse((child) => {
             if (child.name.endsWith('_ArmLeft')) {
                 found = child
             }
         })
-        return found.skeleton.bones.find((bone) => bone.name == "handl")
+        const skinned = found as SkinnedMesh | undefined
+        return skinned?.skeleton.bones.find((bone) => bone.name == "handl")
     })
 
     $effect(() => {

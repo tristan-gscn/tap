@@ -40,7 +40,7 @@ lint: ## Check formatting + clippy on all Rust crates
 		echo ">> fmt check ($$c)"; (cd $$c && cargo fmt --all -- --check) || exit 1; \
 		echo ">> clippy ($$c)"; (cd $$c && cargo clippy --all-targets -- -D warnings) || exit 1; \
 	done
-	cd gui && npm run lint
+	@cd gui && npm run lint
 
 .PHONY: clean
 clean: ## Remove all build artifacts (Rust target/ + GUI dist + node_modules)

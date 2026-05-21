@@ -32,7 +32,7 @@
     <div class="flex-1 text-[11.5px] leading-relaxed">
         {#if visibleItems.length > 0}
             <div class="min-h-full flex flex-col justify-end gap-0.5">
-                {#each visibleItems as item, i}
+                {#each visibleItems as item, i (item.ts + '-' + item.text)}
                     <div style="opacity: {Math.max(0.1, 1 - (visibleItems.length - i - 1) * 0.15)}" class={item.kind === 'event' ? 'text-white/45' : ''}>
                         {#if item.kind === 'event'}
                             {item.text}

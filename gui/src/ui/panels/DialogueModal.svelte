@@ -17,7 +17,7 @@
             <div class="pr-8 text-base font-medium text-white">{game.dialogue.name}</div>
             <div class="mt-1 text-[12px] text-white/65">{game.dialogue.description}</div>
             <ul class="mt-3 space-y-1.5">
-                {#each game.dialogue.dialogue as line}
+                {#each game.dialogue.dialogue as line, i (i)}
                     <li class="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[12.5px] text-white/90">
                         {line}
                     </li>
