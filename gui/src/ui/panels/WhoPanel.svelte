@@ -3,7 +3,7 @@
     import { game } from '../../state/game.svelte';
 </script>
 
-<LiquidGlassPanel>
+<div class="tap-panel">
     <div class="mb-2 flex items-center justify-between text-[0.82rem] font-medium text-white/90">
         <span>Players</span>
     </div>
@@ -18,4 +18,4 @@
             {/each}
         </ul>
     {/if}
-</LiquidGlassPanel>
+</div>

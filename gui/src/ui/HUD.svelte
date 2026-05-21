@@ -5,6 +5,7 @@
     import QuestPanel from './panels/QuestPanel.svelte';
     import ChatPanel from './panels/ChatPanel.svelte';
     import DialogueModal from './panels/DialogueModal.svelte';
+    import WhoPanel from "./panels/WhoPanel.svelte";
 </script>
 
 <div class="pointer-events-none absolute inset-0">
@@ -17,6 +18,7 @@
     </div>
 
     <div class="pointer-events-auto absolute right-4 top-5 w-72 space-y-3 overflow-y-auto pb-4" style="max-height: calc(100vh - 6rem)">
+        <WhoPanel />
         <InventoryPanel />
         <QuestPanel />
     </div>
