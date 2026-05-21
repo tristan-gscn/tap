@@ -41,6 +41,7 @@ lint: ## Check formatting + clippy on all Rust crates
 		echo ">> fmt check ($$c)"; (cd $$c && cargo fmt --all -- --check) || exit 1; \
 		echo ">> clippy ($$c)"; (cd $$c && cargo clippy --all-targets -- -D warnings) || exit 1; \
 	done
+	cd gui && npm install
 	cd gui && npm run lint
 
 .PHONY: clean
