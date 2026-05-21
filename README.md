@@ -9,8 +9,7 @@ client (CLI) and a 3D web client (GUI). The server speaks the line-based
 
 ## Description
 
-Players explore a hand-built world of **10 interconnected rooms** (a sunlit village
-and a dark dungeon), chat in real time, pick up and drop items, take quests from
+Players explore a hand-built world of **10 interconnected rooms** in a dark dungeon, chat in real time, pick up and drop items, take quests from
 NPCs, and fight the restless dead. The server holds all authoritative state and
 pushes asynchronous events (someone entered the room, an NPC died, a chat message)
 to every connected client.
@@ -197,11 +196,8 @@ combat outcomes and respawns, and quest progress/completion. To monitor behaviou
 
 ## Group Contributions
 
-> Fill in each member's real responsibilities before submission.
-
-- **&lt;login1&gt;** — Server (protocol, dispatcher, state, combat/quest systems), CLI client.
-- **&lt;login2&gt;** — GUI client (Threlte scene, panels, room styles), world design.
-- **&lt;login3&gt;** — Bridge, logging, world data, documentation. *(omit if a 2-person group)*
+- **sgil--de** — Server (protocol, dispatcher, state, combat/quest systems), world design, logging.
+- **trgascoi** — GUI client (Threlte scene, panels, room styles), Bridge, CLI client.
 
 ## Resources
 

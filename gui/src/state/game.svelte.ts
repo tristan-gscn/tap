@@ -65,6 +65,8 @@ export type Dialogue = {
 export type ItemDetail = { id: string; name: string };
 export type EquippedSlots = { right: string | null; left: string | null };
 
+export type GroupInvite = { groupId: number; leader: string; from: string };
+
 export const PLAYER_SPAWN: [number, number, number] = [19, 0, 14];
 const ROOM_LAST_X = 38;
 const ROOM_LAST_Z = 18;
@@ -131,6 +133,11 @@ class GameStore {
     eventLog = $state<EventEntry[]>([]);
     onlinePlayers = $state<string[]>([]);
 
+    groupId = $state<number | null>(null);
+    groupLeader = $state('');
+    groupMembers = $state<string[]>([]);
+    groupInvites = $state<GroupInvite[]>([]);
+
     dialogue = $state<Dialogue | null>(null);
 
     tap = new TAPManager();
@@ -178,6 +185,10 @@ class GameStore {
         this.unsubEvent = null;
         this.connected = false;
         this.error = null;
+        this.groupId = null;
+        this.groupLeader = '';
+        this.groupMembers = [];
+        this.groupInvites = [];
     }
 
     private bindEvents() {
@@ -263,6 +274,47 @@ class GameStore {
                 if (data.quest) {
                     this.pushEvent(`Quest accepted: ${data.quest}`);
                 }
+                break;
+            }
+            case 'group_invite': {
+                const leader = (data.leader as string) ?? '?';
+                const from = (data.from as string) ?? leader;
+                const gid = data.group as number;
+                if (gid && !this.groupInvites.some((i) => i.groupId === gid)) {
+                    this.groupInvites = [...this.groupInvites, { groupId: gid, leader, from }];
+                }
+                this.pushEvent(`Group invite from ${from} (leader ${leader})`);
+                break;
+            }
+            case 'group_join': {
+                const who = data.name as string;
+                if (who) {
+                    let members = this.groupMembers;
+                    if (this.groupLeader && !members.includes(this.groupLeader)) {
+                        members = [this.groupLeader, ...members];
+                    }
+                    if (!members.includes(who)) {
+                        members = [...members, who];
+                    }
+                    this.groupMembers = members;
+                    this.pushEvent(`${who} joined the group`);
+                }
+                break;
+            }
+            case 'group_leave': {
+                const who = data.name as string;
+                if (who) {
+                    this.groupMembers = this.groupMembers.filter((m) => m !== who);
+                    this.pushEvent(`${who} left the group`);
+                }
+                break;
+            }
+            case 'group_disband': {
+                this.groupId = null;
+                this.groupLeader = '';
+                this.groupMembers = [];
+                this.groupInvites = [];
+                this.pushEvent(`Group disbanded${data.by ? ` by ${data.by}` : ''}`);
                 break;
             }
         }
@@ -496,6 +548,68 @@ class GameStore {
         const trimmed = text.trim();
         if (!trimmed) return;
         await this.tap.chat(scope, trimmed);
+    }
+
+    async createGroup() {
+        const resp = await this.tap.groupCreate();
+        if (resp.status !== 'ok') {
+            this.pushEvent(`Group create failed: ${resp.message}`);
+            return;
+        }
+        const data = (resp as TapOk).data as { group?: number };
+        this.groupId = data.group ?? null;
+        this.groupLeader = this.playerName;
+        this.groupMembers = [this.playerName];
+        this.groupInvites = [];
+        this.pushEvent(`Group created${this.groupId ? ` (#${this.groupId})` : ''}`);
+    }
+
+    async inviteToGroup(target: string) {
+        const trimmed = target.trim();
+        if (!trimmed) return;
+        const resp = await this.tap.groupInvite(trimmed);
+        if (resp.status !== 'ok') {
+            this.pushEvent(`Invite failed: ${resp.message}`);
+            return;
+        }
+        this.pushEvent(`Invited ${trimmed} to the group`);
+    }
+
+    async joinGroup(leader: string) {
+        const trimmed = leader.trim();
+        if (!trimmed) return;
+        const resp = await this.tap.groupJoin(trimmed);
+        if (resp.status !== 'ok') {
+            this.pushEvent(`Join failed: ${resp.message}`);
+            return;
+        }
+        const data = (resp as TapOk).data as { group?: number };
+        const id = data.group ?? null;
+        this.groupId = id;
+        const invite = id !== null ? this.groupInvites.find((i) => i.groupId === id) : undefined;
+        this.groupLeader = invite?.leader ?? trimmed;
+        this.groupInvites = id !== null ? this.groupInvites.filter((i) => i.groupId !== id) : this.groupInvites;
+        const members: string[] = [];
+        if (this.groupLeader) members.push(this.groupLeader);
+        if (!members.includes(this.playerName)) members.push(this.playerName);
+        this.groupMembers = members;
+        this.pushEvent(`Joined group${id !== null ? ` #${id}` : ''}`);
+    }
+
+    async leaveGroup() {
+        const resp = await this.tap.groupLeave();
+        if (resp.status !== 'ok') {
+            this.pushEvent(`Leave failed: ${resp.message}`);
+            return;
+        }
+        this.groupId = null;
+        this.groupLeader = '';
+        this.groupMembers = [];
+        this.pushEvent('Left the group');
+    }
+
+    declineInvite(groupId: number) {
+        this.groupInvites = this.groupInvites.filter((i) => i.groupId !== groupId);
     }
 }
 
